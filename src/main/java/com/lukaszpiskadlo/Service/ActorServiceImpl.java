@@ -16,7 +16,7 @@ public class ActorServiceImpl implements ActorService {
     private final AtomicLong id;
     private Map<Long, Actor> actors;
 
-    public ActorServiceImpl() {
+    ActorServiceImpl() {
         id = new AtomicLong();
         actors = new HashMap<>();
     }

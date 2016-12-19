@@ -16,7 +16,7 @@ public class ActorController {
     private ActorService actorService;
 
     @Autowired
-    public ActorController(ActorService actorService) {
+    ActorController(ActorService actorService) {
         this.actorService = actorService;
     }
 

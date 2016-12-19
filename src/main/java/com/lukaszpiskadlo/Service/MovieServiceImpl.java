@@ -16,7 +16,7 @@ public class MovieServiceImpl implements MovieService {
     private AtomicLong id;
     private Map<Long, Movie> movies;
 
-    public MovieServiceImpl() {
+    MovieServiceImpl() {
         id = new AtomicLong();
         movies = new HashMap<>();
     }
