@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public List<Movie> findAll() {
+        if (movies.isEmpty())
+            throw new MovieIsEmptyException();
+
         return new ArrayList<>(movies.values());
     }
 

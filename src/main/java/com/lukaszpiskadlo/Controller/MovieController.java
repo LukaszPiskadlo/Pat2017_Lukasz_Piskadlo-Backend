@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Controller;
 
+import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
@@ -50,5 +51,10 @@ public class MovieController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleMovieNotFound(MovieNotFoundException e) {
         return e.getMessage();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void handleMovieIsEmpty(MovieIsEmptyException e) {
     }
 }

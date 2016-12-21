@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class ActorServiceImpl implements ActorService {
 
     @Override
     public List<Actor> findAll() {
+        if (actors.isEmpty())
+            throw new ActorIsEmptyException();
+
         return new ArrayList<>(actors.values());
     }
 

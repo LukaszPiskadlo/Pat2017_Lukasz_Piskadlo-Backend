@@ -1,5 +1,8 @@
 package com.lukaszpiskadlo.Model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Actor {
 
     private long id;

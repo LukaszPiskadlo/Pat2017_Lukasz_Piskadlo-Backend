@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
 import org.junit.Before;
@@ -21,6 +22,11 @@ public class MovieServiceImplTest {
     @Before
     public void setUp() throws Exception {
         movieService = new MovieServiceImpl();
+    }
+
+    @Test(expected = MovieIsEmptyException.class)
+    public void findAll_MovieIsEmpty() throws Exception {
+        movieService.findAll();
     }
 
     @Test(expected = MovieNotFoundException.class)

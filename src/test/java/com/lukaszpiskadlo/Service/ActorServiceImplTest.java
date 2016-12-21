@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
 import org.junit.Before;
@@ -24,6 +25,11 @@ public class ActorServiceImplTest {
     @Before
     public void setUp() throws Exception {
         actorService = new ActorServiceImpl();
+    }
+
+    @Test(expected = ActorIsEmptyException.class)
+    public void findAll_ActorIsEmpty() throws Exception {
+        actorService.findAll();
     }
 
     @Test(expected = ActorNotFoundException.class)
