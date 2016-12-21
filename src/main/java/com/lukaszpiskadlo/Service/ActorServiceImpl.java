@@ -60,6 +60,9 @@ public class ActorServiceImpl implements ActorService {
         if (oldActor == null) {
             throw new ActorNotFoundException(id);
         }
+
+        actor.setId(oldActor.getId());
+
         actors.replace(id, actor);
         return actors.get(id);
     }

@@ -60,6 +60,9 @@ public class MovieServiceImpl implements MovieService {
         if (oldMovie == null) {
             throw new MovieNotFoundException(id);
         }
+
+        movie.setId(oldMovie.getId());
+
         movies.replace(id, movie);
         return movies.get(id);
     }
