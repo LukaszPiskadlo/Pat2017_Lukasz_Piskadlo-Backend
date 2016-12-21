@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.MovieInvalidException;
 import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
@@ -47,6 +48,31 @@ public class MovieServiceImplTest {
                 .build();
 
         movieService.update(ID, movie);
+    }
+
+    @Test(expected = MovieInvalidException.class)
+    public void create_MovieInvalid() throws Exception {
+        Movie movie = new Movie.Builder()
+                .director(DIRECTOR)
+                .build();
+
+        movieService.create(movie);
+    }
+
+    @Test(expected = MovieInvalidException.class)
+    public void update_MovieInvalid() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .build();
+
+        movieService.create(movie);
+
+        Movie updated = new Movie.Builder()
+                .title(TITLE)
+                .build();
+
+        movieService.update(movie.getId(), updated);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.ActorInvalidException;
 import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
@@ -24,6 +25,9 @@ public class ActorServiceImpl implements ActorService {
 
     @Override
     public Actor create(Actor actor) {
+        if (!isActorValid(actor))
+            throw new ActorInvalidException();
+
         long actorId = id.getAndIncrement();
         actor.setId(actorId);
         actors.put(actorId, actor);
@@ -49,6 +53,9 @@ public class ActorServiceImpl implements ActorService {
 
     @Override
     public Actor update(long id, Actor actor) {
+        if (!isActorValid(actor))
+            throw new ActorInvalidException();
+
         Actor oldActor = actors.get(id);
         if (oldActor == null) {
             throw new ActorNotFoundException(id);
@@ -64,5 +71,10 @@ public class ActorServiceImpl implements ActorService {
             throw new ActorNotFoundException(id);
         }
         return actors.remove(id);
+    }
+
+    private boolean isActorValid(Actor actor) {
+        return !(actor.getName() == null || actor.getName().isEmpty()
+                || actor.getLastName() == null || actor.getLastName().isEmpty());
     }
 }

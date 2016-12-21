@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Controller;
 
+import com.lukaszpiskadlo.Exception.ActorInvalidException;
 import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
@@ -56,5 +57,11 @@ public class ActorController {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void handleActorIsEmpty(ActorIsEmptyException e) {
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleActorInvalid(ActorInvalidException e) {
+        return e.getMessage();
     }
 }

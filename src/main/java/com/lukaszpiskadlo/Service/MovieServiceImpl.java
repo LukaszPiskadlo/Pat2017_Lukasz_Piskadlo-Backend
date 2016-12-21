@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.MovieInvalidException;
 import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
@@ -24,6 +25,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie create(Movie movie) {
+        if (!isMovieValid(movie))
+            throw new MovieInvalidException();
+
         long movieId = id.getAndIncrement();
         movie.setId(movieId);
         movies.put(movieId, movie);
@@ -49,6 +53,9 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie update(long id, Movie movie) {
+        if (!isMovieValid(movie))
+            throw new MovieInvalidException();
+
         Movie oldMovie = movies.get(id);
         if (oldMovie == null) {
             throw new MovieNotFoundException(id);
@@ -64,5 +71,10 @@ public class MovieServiceImpl implements MovieService {
             throw new MovieNotFoundException(id);
         }
         return movies.remove(id);
+    }
+
+    private boolean isMovieValid(Movie movie) {
+        return !(movie.getTitle() == null || movie.getTitle().isEmpty()
+                || movie.getDirector() == null || movie.getDirector().isEmpty());
     }
 }
