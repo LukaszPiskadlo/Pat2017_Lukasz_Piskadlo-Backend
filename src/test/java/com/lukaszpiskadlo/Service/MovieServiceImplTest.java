@@ -1,5 +1,7 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
+import com.lukaszpiskadlo.Exception.MovieAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Repository.MainRepository;
@@ -14,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 
 public class MovieServiceImplTest {
 
-    private final static long ID = 12;
+    private final static long ID = 99;
     private final static String TITLE = "Movie";
     private final static String DIRECTOR = "Director";
 
@@ -24,6 +26,8 @@ public class MovieServiceImplTest {
     public void setUp() throws Exception {
         MovieRepository repository = new MainRepository();
         movieService = new MovieServiceImpl(repository);
+
+        movieService.deleteAllMovies();
     }
 
     @Test(expected = MovieNotFoundException.class)
@@ -44,6 +48,47 @@ public class MovieServiceImplTest {
                 .build();
 
         movieService.update(ID, movie);
+    }
+
+    @Test(expected = DisallowedIdModificationException.class)
+    public void create_DisallowedIdModification() throws Exception {
+        Movie movie = new Movie.Builder()
+                .id(ID)
+                .title(TITLE)
+                .director(DIRECTOR)
+                .build();
+
+        movieService.create(movie);
+    }
+
+    @Test(expected = DisallowedIdModificationException.class)
+    public void update_DisallowedIdModification() throws Exception {
+        Movie movie = new Movie.Builder()
+                .id(ID)
+                .title(TITLE)
+                .director(DIRECTOR)
+                .build();
+
+        Movie created = movieService.create(movie);
+
+        movie = new Movie.Builder()
+                .id(ID)
+                .title(TITLE)
+                .director(DIRECTOR)
+                .build();
+
+        movieService.update(created.getId(), movie);
+    }
+
+    @Test(expected = MovieAlreadyExistsException.class)
+    public void create_MovieAlreadyExists() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .build();
+
+        movieService.create(movie);
+        movieService.create(movie);
     }
 
     @Test

@@ -76,6 +76,11 @@ public class MainRepository implements ActorRepository, MovieRepository {
     }
 
     @Override
+    public void removeAllActors() {
+        actors.clear();
+    }
+
+    @Override
     public Movie getMovie(long id) {
         return movies.get(id);
     }
@@ -141,7 +146,15 @@ public class MainRepository implements ActorRepository, MovieRepository {
         return movie;
     }
 
+    @Override
+    public void removeAllMovies() {
+        movies.clear();
+    }
+
     private List<Actor> addActorsFromMovie(List<Actor> actors) {
+        if (actors == null)
+            return null;
+
         List<Actor> cast = new ArrayList<>();
         for (Actor actor : actors) {
             Actor existingActor = findActorByFullName(actor.getName(), actor.getLastName());

@@ -12,4 +12,5 @@ public interface MovieRepository {
     Movie updateMovie(long id, Movie movie);
     Movie removeMovie(long id);
     Movie addActorToMovie(long id, Actor actor);
+    void removeAllMovies();
 }

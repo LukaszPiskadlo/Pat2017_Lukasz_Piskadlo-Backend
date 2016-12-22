@@ -64,4 +64,9 @@ public class ActorServiceImpl implements ActorService {
         }
         return repository.removeActor(id);
     }
+
+    @Override
+    public void deleteAllActors() {
+        repository.removeAllActors();
+    }
 }

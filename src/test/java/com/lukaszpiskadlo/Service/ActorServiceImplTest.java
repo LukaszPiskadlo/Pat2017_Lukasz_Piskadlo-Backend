@@ -1,6 +1,8 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.ActorAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
+import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Repository.ActorRepository;
 import com.lukaszpiskadlo.Repository.MainRepository;
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 public class ActorServiceImplTest {
 
-    private final static long ID = 12;
+    private final static long ID = 99;
     private final static String NAME = "Name";
     private final static String LAST_NAME = "LastName";
 
@@ -27,6 +29,8 @@ public class ActorServiceImplTest {
     public void setUp() throws Exception {
         ActorRepository repository = new MainRepository();
         actorService = new ActorServiceImpl(repository);
+
+        actorService.deleteAllActors();
     }
 
     @Test(expected = ActorNotFoundException.class)
@@ -47,6 +51,46 @@ public class ActorServiceImplTest {
                 .build();
 
         actorService.update(ID, actor);
+    }
+
+    @Test(expected = DisallowedIdModificationException.class)
+    public void create_DisallowedIdModification() throws Exception {
+        Actor actor = new Actor.Builder()
+                .id(ID)
+                .name(NAME)
+                .lastName(LAST_NAME)
+                .build();
+
+        actorService.create(actor);
+    }
+
+    @Test(expected = DisallowedIdModificationException.class)
+    public void update_DisallowedIdModification() throws Exception {
+        Actor actor = new Actor.Builder()
+                .name(NAME)
+                .lastName(LAST_NAME)
+                .build();
+
+        Actor created = actorService.create(actor);
+
+        actor = new Actor.Builder()
+                .id(ID)
+                .name(NAME)
+                .lastName(LAST_NAME)
+                .build();
+
+        actorService.update(created.getId(), actor);
+    }
+
+    @Test(expected = ActorAlreadyExistsException.class)
+    public void create_ActorAlreadyExists() throws Exception {
+        Actor actor = new Actor.Builder()
+                .name(NAME)
+                .lastName(LAST_NAME)
+                .build();
+
+        actorService.create(actor);
+        actorService.create(actor);
     }
 
     @Test

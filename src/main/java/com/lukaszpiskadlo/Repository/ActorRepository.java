@@ -10,4 +10,5 @@ public interface ActorRepository {
     Actor addActor(Actor actor);
     Actor updateActor(long id, Actor actor);
     Actor removeActor(long id);
+    void removeAllActors();
 }

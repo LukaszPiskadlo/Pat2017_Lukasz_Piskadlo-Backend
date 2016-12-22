@@ -79,4 +79,9 @@ public class MovieServiceImpl implements MovieService {
 
         return repository.addActorToMovie(id, actor);
     }
+
+    @Override
+    public void deleteAllMovies() {
+        repository.removeAllMovies();
+    }
 }

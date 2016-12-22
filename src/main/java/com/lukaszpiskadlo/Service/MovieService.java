@@ -12,4 +12,5 @@ public interface MovieService {
     Movie update(long id, Movie movie);
     Movie delete(long id);
     Movie addActorToMovie(long id, Actor actor);
+    void deleteAllMovies();
 }

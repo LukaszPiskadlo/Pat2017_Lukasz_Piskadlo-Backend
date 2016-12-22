@@ -42,13 +42,8 @@ public class ActorControllerTest {
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new ActorController(service)).build();
-    }
 
-    @Test
-    public void actorNotFound() throws Exception {
-        mockMvc.perform(get(PATH + "/12")
-                    .contentType(contentType))
-                .andExpect(status().isNotFound());
+        service.deleteAllActors();
     }
 
     @Test

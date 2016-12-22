@@ -42,13 +42,7 @@ public class MovieControllerTest {
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new MovieController(service)).build();
-    }
-
-    @Test
-    public void movieNotFound() throws Exception {
-        mockMvc.perform(get(PATH + "/12")
-                .contentType(contentType))
-                .andExpect(status().isNotFound());
+        service.deleteAllMovies();
     }
 
     @Test

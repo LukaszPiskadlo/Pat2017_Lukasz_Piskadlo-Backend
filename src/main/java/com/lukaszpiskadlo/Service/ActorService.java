@@ -10,4 +10,5 @@ public interface ActorService {
     Actor findById(long id);
     Actor update(long id, Actor actor);
     Actor delete(long id);
+    void deleteAllActors();
 }
