@@ -2,6 +2,7 @@ package com.lukaszpiskadlo.Service;
 
 import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
+import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,5 +64,19 @@ public class MovieServiceImpl implements MovieService {
             throw new MovieNotFoundException();
         }
         return repository.removeMovie(id);
+    }
+
+    @Override
+    public Movie addActorToMovie(long id, Actor actor) {
+        if (actor.getId() != 0) {
+            throw new DisallowedIdModificationException();
+        }
+
+        Movie movie = repository.getMovie(id);
+        if (movie == null) {
+            throw new MovieNotFoundException();
+        }
+
+        return repository.addActorToMovie(id, actor);
     }
 }

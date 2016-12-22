@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Controller;
 
+import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +45,11 @@ public class MovieController {
     @PutMapping(value = "/{movieId}", consumes = "application/json")
     public Movie updateMovie(@PathVariable long movieId, @Valid @RequestBody Movie movie) {
         return movieService.update(movieId, movie);
+    }
+
+    @PostMapping(value = "/{movieId}/actor", consumes = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Movie addActorToMovie(@PathVariable long movieId, @Valid @RequestBody Actor actor) {
+        return movieService.addActorToMovie(movieId, actor);
     }
 }

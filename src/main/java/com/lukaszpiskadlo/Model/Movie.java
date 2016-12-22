@@ -3,6 +3,7 @@ package com.lukaszpiskadlo.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -13,6 +14,7 @@ public class Movie {
     private String title;
     @NotEmpty
     private String director;
+    @Valid
     private List<Actor> cast;
     private String releaseDate;
     private int duration;

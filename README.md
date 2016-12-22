@@ -274,3 +274,37 @@ mvnw spring-boot:run
   "duration"
 }
 ```
+
+### Add actor to movie
+
+- Request:
+`POST http://localhost:8080/movies/{id}/actor`
+  - Header:
+  `Content-Type:application/json`
+  - Body:
+  ```
+  {
+    "name",
+    "lastName",
+    "birthDate"
+  }
+  ```
+  
+- Response:
+```
+{
+  "id",
+  "title",
+  "director",
+  "cast": [
+    {
+      "id",
+      "name",
+      "lastName",
+      "birthDate"
+    }
+  ],
+  "releaseDate",
+  "duration"
+}
+```
