@@ -1,9 +1,9 @@
 package com.lukaszpiskadlo.Service;
 
-import com.lukaszpiskadlo.Exception.MovieInvalidException;
-import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
+import com.lukaszpiskadlo.Repository.MainRepository;
+import com.lukaszpiskadlo.Repository.MovieRepository;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,12 +22,8 @@ public class MovieServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        movieService = new MovieServiceImpl();
-    }
-
-    @Test(expected = MovieIsEmptyException.class)
-    public void findAll_MovieIsEmpty() throws Exception {
-        movieService.findAll();
+        MovieRepository repository = new MainRepository();
+        movieService = new MovieServiceImpl(repository);
     }
 
     @Test(expected = MovieNotFoundException.class)
@@ -48,31 +44,6 @@ public class MovieServiceImplTest {
                 .build();
 
         movieService.update(ID, movie);
-    }
-
-    @Test(expected = MovieInvalidException.class)
-    public void create_MovieInvalid() throws Exception {
-        Movie movie = new Movie.Builder()
-                .director(DIRECTOR)
-                .build();
-
-        movieService.create(movie);
-    }
-
-    @Test(expected = MovieInvalidException.class)
-    public void update_MovieInvalid() throws Exception {
-        Movie movie = new Movie.Builder()
-                .title(TITLE)
-                .director(DIRECTOR)
-                .build();
-
-        movieService.create(movie);
-
-        Movie updated = new Movie.Builder()
-                .title(TITLE)
-                .build();
-
-        movieService.update(movie.getId(), updated);
     }
 
     @Test

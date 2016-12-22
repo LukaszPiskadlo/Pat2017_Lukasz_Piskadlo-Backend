@@ -1,12 +1,15 @@
 package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.NotEmpty;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Actor {
 
     private long id;
+    @NotEmpty
     private String name;
+    @NotEmpty
     private String lastName;
     private String birthDate;
 
@@ -24,10 +27,6 @@ public class Actor {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -38,6 +37,18 @@ public class Actor {
 
     public String getBirthDate() {
         return birthDate;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 
     public static class Builder {

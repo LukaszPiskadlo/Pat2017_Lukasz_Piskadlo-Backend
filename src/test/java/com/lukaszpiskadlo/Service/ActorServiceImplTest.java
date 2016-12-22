@@ -1,9 +1,9 @@
 package com.lukaszpiskadlo.Service;
 
-import com.lukaszpiskadlo.Exception.ActorInvalidException;
-import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
+import com.lukaszpiskadlo.Repository.ActorRepository;
+import com.lukaszpiskadlo.Repository.MainRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,12 +25,8 @@ public class ActorServiceImplTest {
 
     @Before
     public void setUp() throws Exception {
-        actorService = new ActorServiceImpl();
-    }
-
-    @Test(expected = ActorIsEmptyException.class)
-    public void findAll_ActorIsEmpty() throws Exception {
-        actorService.findAll();
+        ActorRepository repository = new MainRepository();
+        actorService = new ActorServiceImpl(repository);
     }
 
     @Test(expected = ActorNotFoundException.class)
@@ -51,31 +47,6 @@ public class ActorServiceImplTest {
                 .build();
 
         actorService.update(ID, actor);
-    }
-
-    @Test(expected = ActorInvalidException.class)
-    public void create_ActorInvalid() throws Exception {
-        Actor actor = new Actor.Builder()
-                .lastName(LAST_NAME)
-                .build();
-
-        actorService.create(actor);
-    }
-
-    @Test(expected = ActorInvalidException.class)
-    public void update_ActorInvalid() throws Exception {
-        Actor actor = new Actor.Builder()
-                .name(NAME)
-                .lastName(LAST_NAME)
-                .build();
-
-        actorService.create(actor);
-
-        Actor updated = new Actor.Builder()
-                .name(NAME)
-                .build();
-
-        actorService.update(actor.getId(), updated);
     }
 
     @Test

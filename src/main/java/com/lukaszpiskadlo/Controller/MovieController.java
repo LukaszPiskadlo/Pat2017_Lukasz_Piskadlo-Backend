@@ -1,14 +1,12 @@
 package com.lukaszpiskadlo.Controller;
 
-import com.lukaszpiskadlo.Exception.MovieInvalidException;
-import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
-import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +32,7 @@ public class MovieController {
 
     @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Movie createMovie(@RequestBody Movie movie) {
+    public Movie createMovie(@Valid @RequestBody Movie movie) {
         return movieService.create(movie);
     }
 
@@ -44,24 +42,7 @@ public class MovieController {
     }
 
     @PutMapping(value = "/{movieId}", consumes = "application/json")
-    public Movie updateMovie(@PathVariable long movieId, @RequestBody Movie movie) {
+    public Movie updateMovie(@PathVariable long movieId, @Valid @RequestBody Movie movie) {
         return movieService.update(movieId, movie);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleMovieNotFound(MovieNotFoundException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void handleMovieIsEmpty(MovieIsEmptyException e) {
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleMovieInvalid(MovieInvalidException e) {
-        return e.getMessage();
     }
 }

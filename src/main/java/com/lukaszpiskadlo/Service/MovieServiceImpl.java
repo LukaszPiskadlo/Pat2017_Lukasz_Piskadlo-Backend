@@ -1,83 +1,67 @@
 package com.lukaszpiskadlo.Service;
 
-import com.lukaszpiskadlo.Exception.MovieInvalidException;
-import com.lukaszpiskadlo.Exception.MovieIsEmptyException;
+import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
+import com.lukaszpiskadlo.Repository.MovieRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class MovieServiceImpl implements MovieService {
 
-    private AtomicLong id;
-    private Map<Long, Movie> movies;
+    private MovieRepository repository;
 
-    MovieServiceImpl() {
-        id = new AtomicLong();
-        movies = new HashMap<>();
+    @Autowired
+    MovieServiceImpl(MovieRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public Movie create(Movie movie) {
-        if (!isMovieValid(movie))
-            throw new MovieInvalidException();
+        if (movie.getId() != 0) {
+            throw new DisallowedIdModificationException();
+        }
 
-        long movieId = id.getAndIncrement();
-        movie.setId(movieId);
-        movies.put(movieId, movie);
-        return movies.get(movieId);
+        return repository.addMovie(movie);
     }
 
     @Override
     public List<Movie> findAll() {
-        if (movies.isEmpty())
-            throw new MovieIsEmptyException();
-
-        return new ArrayList<>(movies.values());
+        return repository.getAllMovies();
     }
 
     @Override
     public Movie findById(long id) {
-        Movie movie = movies.get(id);
+        Movie movie = repository.getMovie(id);
         if (movie == null) {
-            throw new MovieNotFoundException(id);
+            throw new MovieNotFoundException();
         }
         return movie;
     }
 
     @Override
     public Movie update(long id, Movie movie) {
-        if (!isMovieValid(movie))
-            throw new MovieInvalidException();
-
-        Movie oldMovie = movies.get(id);
-        if (oldMovie == null) {
-            throw new MovieNotFoundException(id);
+        if (movie.getId() != 0) {
+            throw new DisallowedIdModificationException();
         }
 
-        movie.setId(oldMovie.getId());
+        Movie oldMovie = repository.getMovie(id);
+        if (oldMovie == null) {
+            throw new MovieNotFoundException();
+        }
 
-        movies.replace(id, movie);
-        return movies.get(id);
+        return repository.updateMovie(id, movie);
     }
 
     @Override
     public Movie delete(long id) {
-        Movie movie = movies.get(id);
+        Movie movie = repository.getMovie(id);
         if (movie == null) {
-            throw new MovieNotFoundException(id);
+            throw new MovieNotFoundException();
         }
-        return movies.remove(id);
-    }
-
-    private boolean isMovieValid(Movie movie) {
-        return !(movie.getTitle() == null || movie.getTitle().isEmpty()
-                || movie.getDirector() == null || movie.getDirector().isEmpty());
+        return repository.removeMovie(id);
     }
 }

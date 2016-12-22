@@ -1,14 +1,12 @@
 package com.lukaszpiskadlo.Controller;
 
-import com.lukaszpiskadlo.Exception.ActorInvalidException;
-import com.lukaszpiskadlo.Exception.ActorIsEmptyException;
-import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Service.ActorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +32,7 @@ public class ActorController {
 
     @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public Actor createActor(@RequestBody Actor actor) {
+    public Actor createActor(@Valid @RequestBody Actor actor) {
         return actorService.create(actor);
     }
 
@@ -44,24 +42,7 @@ public class ActorController {
     }
 
     @PutMapping(value = "/{actorId}", consumes = "application/json")
-    public Actor updateActor(@PathVariable long actorId, @RequestBody Actor actor) {
+    public Actor updateActor(@PathVariable long actorId, @Valid @RequestBody Actor actor) {
         return actorService.update(actorId, actor);
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleActorNotFound(ActorNotFoundException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void handleActorIsEmpty(ActorIsEmptyException e) {
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleActorInvalid(ActorInvalidException e) {
-        return e.getMessage();
     }
 }

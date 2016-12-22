@@ -1,14 +1,17 @@
 package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.List;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Movie {
 
     private long id;
+    @NotEmpty
     private String title;
+    @NotEmpty
     private String director;
     private List<Actor> cast;
     private String releaseDate;
@@ -30,10 +33,6 @@ public class Movie {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -52,6 +51,26 @@ public class Movie {
 
     public int getDuration() {
         return duration;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public void setCast(List<Actor> cast) {
+        this.cast = cast;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     public static class Builder {
