@@ -35,12 +35,11 @@ public class MainRepository implements ActorRepository, MovieRepository {
 
     @Override
     public Actor addActor(Actor actor) {
-        for (Actor existing : getAllActors()) {
-            if (actor.getName().equals(existing.getName())
-                    && actor.getLastName().equals(existing.getLastName())) {
-                throw new ActorAlreadyExistsException();
-            }
-        }
+        getAllActors().stream()
+                .filter(a -> a.getName().equals(actor.getName()))
+                .filter(a -> a.getLastName().equals(actor.getLastName()))
+                .findAny()
+                .ifPresent(a -> { throw new ActorAlreadyExistsException(); });
 
         long id = actorId.getAndIncrement();
         Actor newActor = new Actor.Builder()
@@ -92,12 +91,11 @@ public class MainRepository implements ActorRepository, MovieRepository {
 
     @Override
     public Movie addMovie(Movie movie) {
-        for (Movie existing : getAllMovies()) {
-            if (movie.getTitle().equals(existing.getTitle())
-                    && movie.getDirector().equals(existing.getDirector())) {
-                throw new MovieAlreadyExistsException();
-            }
-        }
+        getAllMovies().stream()
+                .filter(m -> m.getTitle().equals(movie.getTitle()))
+                .filter(m -> m.getDirector().equals(movie.getDirector()))
+                .findAny()
+                .ifPresent(m -> { throw new MovieAlreadyExistsException(); });
 
         List<Actor> cast = addActorsFromMovie(movie.getCast());
 
@@ -168,25 +166,22 @@ public class MainRepository implements ActorRepository, MovieRepository {
     }
 
     private Actor findActorByFullName(String name, String lastName) {
-        for (Actor actor : getAllActors()) {
-            if (actor.getName().equals(name)
-                    && actor.getLastName().equals(lastName)) {
-                return actor;
-            }
-        }
-        return null;
+        return getAllActors().stream()
+                .filter(a -> a.getName().equals(name))
+                .filter(a -> a.getLastName().equals(lastName))
+                .findFirst()
+                .orElse(null);
     }
 
     private void updateActorFromMovie(Actor actor) {
-        for (Movie movie : getAllMovies()) {
-            for (Actor current : movie.getCast()) {
-                if (current.getId() == actor.getId()) {
-                    current.setName(actor.getName());
-                    current.setLastName(actor.getLastName());
-                    current.setBirthDate(actor.getBirthDate());
-                }
-            }
-        }
+        getAllMovies().stream()
+                .flatMap(m -> m.getCast().stream())
+                .filter(a -> a.getId() == actor.getId())
+                .forEach(a -> {
+                    a.setName(actor.getName());
+                    a.setLastName(actor.getLastName());
+                    a.setBirthDate(actor.getBirthDate());
+                });
     }
 
     private void removeActorFromMovie(Actor actor) {
