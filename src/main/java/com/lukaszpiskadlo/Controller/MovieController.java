@@ -52,4 +52,14 @@ public class MovieController {
     public Movie addActorToMovie(@PathVariable long movieId, @Valid @RequestBody Actor actor) {
         return movieService.addActorToMovie(movieId, actor);
     }
+
+    @GetMapping("/group/{groupName}")
+    public List<Movie> findMoviesByGroup(@PathVariable String groupName) {
+        return movieService.findByGroup(groupName);
+    }
+
+    @GetMapping("/available")
+    public List<Movie> findAvailableMovies() {
+        return movieService.findAvailable();
+    }
 }

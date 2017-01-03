@@ -13,4 +13,6 @@ public interface MovieRepository {
     Movie removeMovie(long id);
     Movie addActorToMovie(long id, Actor actor);
     void removeAllMovies();
+    List<Movie> getMoviesByGroup(Movie.Group group);
+    List<Movie> getAvailableMovies();
 }

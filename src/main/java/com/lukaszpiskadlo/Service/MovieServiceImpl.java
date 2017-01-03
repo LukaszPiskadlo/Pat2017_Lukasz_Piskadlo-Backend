@@ -1,6 +1,7 @@
 package com.lukaszpiskadlo.Service;
 
 import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
+import com.lukaszpiskadlo.Exception.InvalidMovieGroupNameException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
@@ -83,5 +84,24 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public void deleteAllMovies() {
         repository.removeAllMovies();
+    }
+
+    @Override
+    public List<Movie> findByGroup(String groupName) {
+        switch (groupName.toLowerCase()) {
+            case "new":
+                return repository.getMoviesByGroup(Movie.Group.NEW);
+            case "hit":
+                return repository.getMoviesByGroup(Movie.Group.HIT);
+            case "other":
+                return repository.getMoviesByGroup(Movie.Group.OTHER);
+            default:
+                throw new InvalidMovieGroupNameException();
+        }
+    }
+
+    @Override
+    public List<Movie> findAvailable() {
+        return repository.getAvailableMovies();
     }
 }

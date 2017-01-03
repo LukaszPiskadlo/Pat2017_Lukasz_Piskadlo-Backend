@@ -13,4 +13,6 @@ public interface MovieService {
     Movie delete(long id);
     Movie addActorToMovie(long id, Actor actor);
     void deleteAllMovies();
+    List<Movie> findByGroup(String groupName);
+    List<Movie> findAvailable();
 }

@@ -308,3 +308,56 @@ mvnw spring-boot:run
   "duration"
 }
 ```
+
+### Get available movies
+
+- Request:
+`GET http://localhost:8080/movies/available`
+
+- Response:
+```
+[
+  {
+    "id",
+    "title",
+    "director",
+    "cast": [
+      {
+        "id",
+        "name",
+        "lastName",
+        "birthDate"
+      }
+    ],
+    "releaseDate",
+    "duration"
+  }
+]
+```
+
+### Get movies by group
+
+- Request:
+`GET http://localhost:8080/movies/group/{groupName}`
+    - `{groupName} : NEW, HIT, OTHER`
+
+- Response:
+```
+[
+  {
+    "id",
+    "title",
+    "director",
+    "cast": [
+      {
+        "id",
+        "name",
+        "lastName",
+        "birthDate"
+      }
+    ],
+    "releaseDate",
+    "duration"
+  }
+]
+```

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Component
 public class MainRepository implements ActorRepository, MovieRepository {
@@ -107,6 +108,8 @@ public class MainRepository implements ActorRepository, MovieRepository {
                 .cast(cast)
                 .releaseDate(movie.getReleaseDate())
                 .duration(movie.getDuration())
+                .amountAvailable(movie.getAmountAvailable())
+                .group(movie.getGroup())
                 .build();
 
         movies.put(id, newMovie);
@@ -123,6 +126,8 @@ public class MainRepository implements ActorRepository, MovieRepository {
         toUpdate.setCast(cast);
         toUpdate.setReleaseDate(movie.getReleaseDate());
         toUpdate.setDuration(movie.getDuration());
+        toUpdate.setAmountAvailable(movie.getAmountAvailable());
+        toUpdate.setGroup(movie.getGroup());
 
         return getMovie(id);
     }
@@ -147,6 +152,20 @@ public class MainRepository implements ActorRepository, MovieRepository {
     @Override
     public void removeAllMovies() {
         movies.clear();
+    }
+
+    @Override
+    public List<Movie> getMoviesByGroup(Movie.Group group) {
+        return getAllMovies().stream()
+                .filter(m -> m.getGroup() == group)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Movie> getAvailableMovies() {
+        return getAllMovies().stream()
+                .filter(m -> m.getAmountAvailable() > 0)
+                .collect(Collectors.toList());
     }
 
     private List<Actor> addActorsFromMovie(List<Actor> actors) {

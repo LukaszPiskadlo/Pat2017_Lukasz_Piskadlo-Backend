@@ -19,6 +19,9 @@ public class Movie {
     private String releaseDate;
     private int duration;
 
+    private int amountAvailable;
+    private Group group;
+
     public Movie() {
     }
 
@@ -29,6 +32,8 @@ public class Movie {
         this.cast = builder.cast;
         this.releaseDate = builder.releaseDate;
         this.duration = builder.duration;
+        this.amountAvailable = builder.amountAvailable;
+        this.group = builder.group;
     }
 
     public long getId() {
@@ -75,6 +80,22 @@ public class Movie {
         this.duration = duration;
     }
 
+    public int getAmountAvailable() {
+        return amountAvailable;
+    }
+
+    public void setAmountAvailable(int amountAvailable) {
+        this.amountAvailable = amountAvailable;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public static class Builder {
 
         private long id;
@@ -83,6 +104,8 @@ public class Movie {
         private List<Actor> cast;
         private String releaseDate;
         private int duration;
+        private int amountAvailable;
+        private Group group;
 
         public Builder() {
         }
@@ -117,8 +140,24 @@ public class Movie {
             return this;
         }
 
+        public Builder amountAvailable(int amountAvailable) {
+            this.amountAvailable = amountAvailable;
+            return this;
+        }
+
+        public Builder group(Group group) {
+            this.group = group;
+            return this;
+        }
+
         public Movie build() {
             return new Movie(this);
         }
+    }
+
+    public enum Group {
+        NEW,
+        HIT,
+        OTHER
     }
 }
