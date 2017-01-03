@@ -125,4 +125,33 @@ public class MovieControllerTest {
                 .andExpect(jsonPath("$.title", is(updated.getTitle())));
     }
 
+    @Test
+    public void findMoviesByGroup() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .group(Movie.Group.NEW)
+                .build();
+
+        service.create(movie);
+
+        mockMvc.perform(get(PATH + "/group/" + Movie.Group.NEW))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType));
+    }
+
+    @Test
+    public void findAvailableMovies() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .amountAvailable(2)
+                .build();
+
+        service.create(movie);
+
+        mockMvc.perform(get(PATH + "/available"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(contentType));
+    }
 }

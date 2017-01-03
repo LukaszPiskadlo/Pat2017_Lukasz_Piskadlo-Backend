@@ -1,6 +1,7 @@
 package com.lukaszpiskadlo.Service;
 
 import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
+import com.lukaszpiskadlo.Exception.InvalidMovieGroupNameException;
 import com.lukaszpiskadlo.Exception.MovieAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
@@ -163,5 +164,52 @@ public class MovieServiceImplTest {
 
         assertEquals(created.getTitle(), result.getTitle());
         assertEquals(created.getDirector(), result.getDirector());
+    }
+
+    @Test(expected = InvalidMovieGroupNameException.class)
+    public void findByGroup_InvalidMovieGroupName() throws Exception {
+        movieService.findByGroup("InvalidGroupName");
+    }
+
+    @Test
+    public void findByGroup() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .group(Movie.Group.NEW)
+                .build();
+
+        Movie created = movieService.create(movie);
+        List<Movie> result = movieService.findByGroup("new");
+
+        assertTrue(result.contains(created));
+    }
+
+    @Test
+    public void findAvailable_Empty() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .amountAvailable(0)
+                .build();
+
+        movieService.create(movie);
+        List<Movie> result = movieService.findAvailable();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void findAvailable() throws Exception {
+        Movie movie = new Movie.Builder()
+                .title(TITLE)
+                .director(DIRECTOR)
+                .amountAvailable(4)
+                .build();
+
+        Movie created = movieService.create(movie);
+        List<Movie> result = movieService.findAvailable();
+
+        assertTrue(result.contains(created));
     }
 }
