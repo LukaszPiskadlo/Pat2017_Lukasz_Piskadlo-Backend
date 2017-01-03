@@ -2,8 +2,10 @@ package com.lukaszpiskadlo.Repository;
 
 import com.lukaszpiskadlo.Exception.ActorAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.MovieAlreadyExistsException;
+import com.lukaszpiskadlo.Exception.UserAlreadyExistsException;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
+import com.lukaszpiskadlo.Model.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,12 +16,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
-public class MainRepository implements ActorRepository, MovieRepository {
+public class MainRepository implements ActorRepository, MovieRepository, UserRepository {
 
     private final static AtomicLong actorId = new AtomicLong();
     private final static AtomicLong movieId = new AtomicLong();
+    private final static AtomicLong userId = new AtomicLong();
     private final static Map<Long, Actor> actors = new HashMap<>();
     private final static Map<Long, Movie> movies = new HashMap<>();
+    private final static Map<Long, User> users = new HashMap<>();
 
     public MainRepository() {
     }
@@ -212,5 +216,30 @@ public class MainRepository implements ActorRepository, MovieRepository {
                 }
             }
         }
+    }
+
+    @Override
+    public User addUser(User user) {
+        users.values().stream()
+                .filter(u -> u.getName().equals(user.getName()))
+                .findAny()
+                .ifPresent(u -> { throw new UserAlreadyExistsException(); });
+
+        long id = userId.getAndIncrement();
+        User newUser = new User.Builder()
+                .id(id)
+                .name(user.getName())
+                .password(user.getPassword())
+                .rentedMovies(user.getRentedMovies())
+                .build();
+
+        newUser.setRentedMovies(user.getRentedMovies());
+        users.put(id, newUser);
+        return getUser(id);
+    }
+
+    @Override
+    public User getUser(long id) {
+        return users.get(id);
     }
 }

@@ -156,8 +156,18 @@ public class Movie {
     }
 
     public enum Group {
-        NEW,
-        HIT,
-        OTHER
+        NEW(12.5),
+        HIT(10),
+        OTHER(7.50);
+
+        private double price;
+
+        Group(double price) {
+            this.price = price;
+        }
+
+        public double getPrice() {
+            return price;
+        }
     }
 }
