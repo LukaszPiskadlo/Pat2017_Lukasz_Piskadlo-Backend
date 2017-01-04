@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -13,9 +13,12 @@ public class User {
     private long id;
     @NotEmpty
     private String name;
+    @NotEmpty
+    private String lastName;
+    private String email;
     private String password;
-    @Valid
-    private List<Movie> rentedMovies;
+    @JsonIgnore
+    private List<Long> rentedMoviesIds;
 
     public User() {
     }
@@ -23,8 +26,10 @@ public class User {
     private User(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
+        this.lastName = builder.lastName;
+        this.email = builder.email;
         this.password = builder.password;
-        this.rentedMovies = builder.rentedMovies;
+        this.rentedMoviesIds = builder.rentedMoviesIds;
     }
 
     public long getId() {
@@ -48,21 +53,40 @@ public class User {
         this.password = password;
     }
 
-    public List<Movie> getRentedMovies() {
-        return rentedMovies;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setRentedMovies(List<Movie> rentedMovies) {
-        this.rentedMovies = rentedMovies;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Long> getRentedMoviesIds() {
+        return rentedMoviesIds;
+    }
+
+    public void setRentedMoviesIds(List<Long> rentedMoviesIds) {
+        this.rentedMoviesIds = rentedMoviesIds;
     }
 
     public static class Builder {
         private long id;
         private String name;
+        private String lastName;
+        private String email;
         private String password;
-        private List<Movie> rentedMovies;
+        private List<Long> rentedMoviesIds;
 
         public Builder() {
+            rentedMoviesIds = new ArrayList<>();
         }
 
         public Builder id(long id) {
@@ -75,13 +99,23 @@ public class User {
             return this;
         }
 
+        public Builder lastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
         public Builder password(String password) {
             this.password = password;
             return this;
         }
 
-        public Builder rentedMovies(List<Movie> rentedMovies) {
-            this.rentedMovies = rentedMovies;
+        public Builder rentedMoviesIds(List<Long> rentedMoviesIds) {
+            this.rentedMoviesIds = rentedMoviesIds;
             return this;
         }
 

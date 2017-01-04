@@ -36,6 +36,16 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException();
         }
 
-        return user.getRentedMovies();
+        return repository.getUserRentedMovies(id);
+    }
+
+    @Override
+    public double rentMovie(long userId, List<Movie> movies) {
+        return 0;
+    }
+
+    @Override
+    public List<Movie> returnMovie(long userId, List<Movie> movies) {
+        return null;
     }
 }

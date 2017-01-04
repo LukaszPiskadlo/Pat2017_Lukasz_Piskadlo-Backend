@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -108,6 +109,7 @@ public class Movie {
         private Group group;
 
         public Builder() {
+            cast = new ArrayList<>();
         }
 
         public Builder id(long id) {

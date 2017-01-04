@@ -31,4 +31,15 @@ public class UserController {
     public List<Movie> findRentedMovies(@PathVariable long userId) {
         return userService.findRentedMovies(userId);
     }
+
+    @PostMapping("/{userId}/rent")
+    @ResponseStatus(HttpStatus.CREATED)
+    public double rentMovies(@PathVariable long userId, @Valid @RequestBody List<Movie> movies) {
+        return userService.rentMovie(userId, movies);
+    }
+
+    @PostMapping("{userId}/return")
+    public List<Movie> returnMovies(@PathVariable long userId, @Valid @RequestBody List<Movie> movies) {
+        return userService.returnMovie(userId, movies);
+    }
 }

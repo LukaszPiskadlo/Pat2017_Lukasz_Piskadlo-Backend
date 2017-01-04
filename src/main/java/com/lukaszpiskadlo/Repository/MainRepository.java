@@ -46,7 +46,7 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
                 .findAny()
                 .ifPresent(a -> { throw new ActorAlreadyExistsException(); });
 
-        long id = actorId.getAndIncrement();
+        long id = actorId.incrementAndGet();
         Actor newActor = new Actor.Builder()
                 .id(id)
                 .name(actor.getName())
@@ -104,7 +104,7 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
 
         List<Actor> cast = addActorsFromMovie(movie.getCast());
 
-        long id = movieId.getAndIncrement();
+        long id = movieId.incrementAndGet();
         Movie newMovie = new Movie.Builder()
                 .id(id)
                 .title(movie.getTitle())
@@ -225,15 +225,15 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
                 .findAny()
                 .ifPresent(u -> { throw new UserAlreadyExistsException(); });
 
-        long id = userId.getAndIncrement();
+        long id = userId.incrementAndGet();
         User newUser = new User.Builder()
                 .id(id)
                 .name(user.getName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
                 .password(user.getPassword())
-                .rentedMovies(user.getRentedMovies())
                 .build();
 
-        newUser.setRentedMovies(user.getRentedMovies());
         users.put(id, newUser);
         return getUser(id);
     }
@@ -241,5 +241,27 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
     @Override
     public User getUser(long id) {
         return users.get(id);
+    }
+
+    @Override
+    public List<Movie> getUserRentedMovies(long id) {
+        return getUser(id).getRentedMoviesIds().stream()
+                .map(this::getMovie)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Movie.Group getMovieGroup(Movie movie) {
+        return getMovie(movie.getId()).getGroup();
+    }
+
+    @Override
+    public Movie addRentedMovie(long userId, Movie movie) {
+        return null;
+    }
+
+    @Override
+    public Movie removeRentedMovie(long userId, Movie movie) {
+        return null;
     }
 }
