@@ -12,4 +12,5 @@ public interface UserService {
     List<Movie> findRentedMovies(long id);
     Order rentMovie(long userId, Set<Long> movieIds);
     List<Movie> returnMovie(long userId, Set<Long> movieIds);
+    void deleteAllUsers();
 }

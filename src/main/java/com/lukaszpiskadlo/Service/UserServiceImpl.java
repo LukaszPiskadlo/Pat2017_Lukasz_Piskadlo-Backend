@@ -99,6 +99,11 @@ public class UserServiceImpl implements UserService {
         return movies;
     }
 
+    @Override
+    public void deleteAllUsers() {
+        userRepository.removeAllUsers();
+    }
+
     private List<Movie> getMoviesFromIds(List<Long> movieIds) {
         List<Movie> movies = new ArrayList<>();
         for (Long id : movieIds) {

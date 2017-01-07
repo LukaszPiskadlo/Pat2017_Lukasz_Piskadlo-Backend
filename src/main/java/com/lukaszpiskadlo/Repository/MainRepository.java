@@ -259,4 +259,9 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
     public void removeRentedMovie(long userId, List<Long> moviesIds) {
         users.get(userId).removeAllRentedMoviesIds(moviesIds);
     }
+
+    @Override
+    public void removeAllUsers() {
+        users.clear();
+    }
 }

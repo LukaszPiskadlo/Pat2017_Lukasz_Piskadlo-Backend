@@ -11,4 +11,5 @@ public interface UserRepository {
     List<Movie> getUserRentedMovies(long userId);
     void addRentedMovies(long userId, List<Long> moviesIds);
     void removeRentedMovie(long userId, List<Long> moviesIds);
+    void removeAllUsers();
 }
