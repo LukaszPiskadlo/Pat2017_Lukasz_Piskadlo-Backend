@@ -1,6 +1,7 @@
 package com.lukaszpiskadlo.Controller;
 
 import com.lukaszpiskadlo.Model.Movie;
+import com.lukaszpiskadlo.Model.Order;
 import com.lukaszpiskadlo.Model.User;
 import com.lukaszpiskadlo.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -32,14 +34,14 @@ public class UserController {
         return userService.findRentedMovies(userId);
     }
 
-    @PostMapping("/{userId}/rent")
+    @PostMapping(value = "/{userId}/rent", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public double rentMovies(@PathVariable long userId, @Valid @RequestBody List<Movie> movies) {
-        return userService.rentMovie(userId, movies);
+    public Order rentMovies(@PathVariable long userId, @RequestBody Set<Long> movieIds) {
+        return userService.rentMovie(userId, movieIds);
     }
 
-    @PostMapping("{userId}/return")
-    public List<Movie> returnMovies(@PathVariable long userId, @Valid @RequestBody List<Movie> movies) {
-        return userService.returnMovie(userId, movies);
+    @PostMapping(value = "{userId}/return", consumes = "application/json")
+    public List<Movie> returnMovies(@PathVariable long userId, @RequestBody Set<Long> movieIds) {
+        return userService.returnMovie(userId, movieIds);
     }
 }

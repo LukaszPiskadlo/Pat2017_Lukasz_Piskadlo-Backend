@@ -77,6 +77,26 @@ public class User {
         this.rentedMoviesIds = rentedMoviesIds;
     }
 
+    public void addRentedMovieId(long id) {
+        rentedMoviesIds.add(id);
+    }
+
+    public void addAllRentedMoviesIds(List<Long> ids) {
+        rentedMoviesIds.addAll(ids);
+    }
+
+    public void removeRentedMovieId(long id) {
+        rentedMoviesIds.remove(id);
+    }
+
+    public void removeAllRentedMoviesIds(List<Long> ids) {
+        rentedMoviesIds.removeAll(ids);
+    }
+
+    public int getAmountOfRentedMovies() {
+        return rentedMoviesIds.size();
+    }
+
     public static class Builder {
         private long id;
         private String name;

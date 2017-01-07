@@ -244,24 +244,19 @@ public class MainRepository implements ActorRepository, MovieRepository, UserRep
     }
 
     @Override
-    public List<Movie> getUserRentedMovies(long id) {
-        return getUser(id).getRentedMoviesIds().stream()
+    public List<Movie> getUserRentedMovies(long userId) {
+        return getUser(userId).getRentedMoviesIds().stream()
                 .map(this::getMovie)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Movie.Group getMovieGroup(Movie movie) {
-        return getMovie(movie.getId()).getGroup();
+    public void addRentedMovies(long userId, List<Long> moviesIds) {
+        users.get(userId).addAllRentedMoviesIds(moviesIds);
     }
 
     @Override
-    public Movie addRentedMovie(long userId, Movie movie) {
-        return null;
-    }
-
-    @Override
-    public Movie removeRentedMovie(long userId, Movie movie) {
-        return null;
+    public void removeRentedMovie(long userId, List<Long> moviesIds) {
+        users.get(userId).removeAllRentedMoviesIds(moviesIds);
     }
 }

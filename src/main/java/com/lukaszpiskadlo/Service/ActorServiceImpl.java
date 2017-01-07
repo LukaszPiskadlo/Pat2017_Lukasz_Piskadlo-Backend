@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class ActorServiceImpl implements ActorService {
 
-    private ActorRepository repository;
+    private final ActorRepository repository;
 
     @Autowired
     ActorServiceImpl(ActorRepository repository) {

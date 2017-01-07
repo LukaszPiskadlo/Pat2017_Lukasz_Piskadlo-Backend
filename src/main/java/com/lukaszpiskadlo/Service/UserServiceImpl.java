@@ -1,23 +1,34 @@
 package com.lukaszpiskadlo.Service;
 
-import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
-import com.lukaszpiskadlo.Exception.UserNotFoundException;
+import com.lukaszpiskadlo.Exception.*;
 import com.lukaszpiskadlo.Model.Movie;
+import com.lukaszpiskadlo.Model.Order;
 import com.lukaszpiskadlo.Model.User;
+import com.lukaszpiskadlo.Repository.MovieRepository;
 import com.lukaszpiskadlo.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository repository;
+    private final static int MAX_MOVIES_AMOUNT = 10;
+    private final static double DISCOUNT_FOR_NEW_MOVIES = 0.25;
+    private final static int NEW_MOVIES_AMOUNT_FOR_DISCOUNT = 2;
+    private final static int AMOUNT_OF_MOVIES_FOR_BONUS = 3;
+    private final static int AMOUNT_OF_BONUS_OTHER_MOVIES = 1;
+
+    private final UserRepository userRepository;
+    private final MovieRepository movieRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository repository) {
-        this.repository = repository;
+    public UserServiceImpl(UserRepository userRepository, MovieRepository movieRepository) {
+        this.userRepository = userRepository;
+        this.movieRepository = movieRepository;
     }
 
     @Override
@@ -26,26 +37,120 @@ public class UserServiceImpl implements UserService {
             throw new DisallowedIdModificationException();
         }
 
-        return repository.addUser(user);
+        return userRepository.addUser(user);
     }
 
     @Override
     public List<Movie> findRentedMovies(long id) {
-        User user = repository.getUser(id);
+        User user = userRepository.getUser(id);
         if (user == null) {
             throw new UserNotFoundException();
         }
 
-        return repository.getUserRentedMovies(id);
+        return userRepository.getUserRentedMovies(id);
     }
 
     @Override
-    public double rentMovie(long userId, List<Movie> movies) {
-        return 0;
+    public Order rentMovie(long userId, Set<Long> movieIds) {
+        List<Long> idList = new ArrayList<>(movieIds);
+
+        User user = userRepository.getUser(userId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        List<Movie> movies = getMoviesFromIds(idList);
+        checkMaxRentedMoviesAmount(user, movies.size());
+        checkMoviesAvailability(movies);
+
+        movies.forEach(movie -> movie.setAmountAvailable(movie.getAmountAvailable() - 1));
+
+        double price = calculatePrice(movies);
+
+        userRepository.addRentedMovies(userId, idList);
+
+        return new Order.Builder()
+                .user(user)
+                .price(price)
+                .rentedMovies(movies)
+                .build();
     }
 
     @Override
-    public List<Movie> returnMovie(long userId, List<Movie> movies) {
-        return null;
+    public List<Movie> returnMovie(long userId, Set<Long> movieIds) {
+        List<Long> idList = new ArrayList<>(movieIds);
+
+        User user = userRepository.getUser(userId);
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+
+        List<Movie> movies = getMoviesFromIds(idList);
+        List<Movie> rentedMovies = userRepository.getUserRentedMovies(userId);
+
+        if (!rentedMovies.containsAll(movies)) {
+            throw new MovieNotRentedException();
+        }
+
+        movies.forEach(movie -> movie.setAmountAvailable(movie.getAmountAvailable() + 1));
+
+        userRepository.removeRentedMovie(userId, idList);
+
+        return movies;
+    }
+
+    private List<Movie> getMoviesFromIds(List<Long> movieIds) {
+        List<Movie> movies = new ArrayList<>();
+        for (Long id : movieIds) {
+            Movie movie = movieRepository.getMovie(id);
+            if (movie == null) {
+                throw new MovieNotFoundException();
+            }
+            movies.add(movie);
+        }
+
+        return movies;
+    }
+
+    private void checkMaxRentedMoviesAmount(User user, int movieAmount) {
+        if (user.getAmountOfRentedMovies() + movieAmount > MAX_MOVIES_AMOUNT){
+            throw new TooManyRentedMoviesException();
+        }
+    }
+
+    private double calculatePrice(List<Movie> movies) {
+        double price = 0;
+        int newMovieAmount = 0;
+        int otherMovieAmount = 0;
+
+        for (Movie movie : movies) {
+            Movie.Group group = movie.getGroup();
+
+            price += group.getPrice();
+
+            if (group == Movie.Group.NEW) {
+                newMovieAmount++;
+            } else if (group == Movie.Group.OTHER) {
+                otherMovieAmount++;
+            }
+        }
+
+        if (movies.size() > AMOUNT_OF_MOVIES_FOR_BONUS
+                && otherMovieAmount >= AMOUNT_OF_BONUS_OTHER_MOVIES) {
+            price -= Movie.Group.OTHER.getPrice();
+        }
+
+        if (newMovieAmount >= NEW_MOVIES_AMOUNT_FOR_DISCOUNT) {
+            price *= 1 - DISCOUNT_FOR_NEW_MOVIES;
+        }
+
+        return price;
+    }
+
+    private void checkMoviesAvailability(List<Movie> movies) {
+        movies.stream()
+                .filter(m -> m.getAmountAvailable() <= 0)
+                .findAny()
+                .ifPresent(m -> { throw new MovieNotAvailableException(); });
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 public class MovieServiceImpl implements MovieService {
 
-    private MovieRepository repository;
+    private final MovieRepository repository;
 
     @Autowired
     MovieServiceImpl(MovieRepository repository) {

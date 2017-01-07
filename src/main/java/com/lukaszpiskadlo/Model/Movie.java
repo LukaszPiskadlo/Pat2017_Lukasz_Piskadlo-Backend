@@ -158,9 +158,9 @@ public class Movie {
     }
 
     public enum Group {
-        NEW(12.5),
+        NEW(12),
         HIT(10),
-        OTHER(7.50);
+        OTHER(7);
 
         private double price;
 

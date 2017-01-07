@@ -17,6 +17,9 @@ public class ControllerExceptionHandler {
     private final static String INVALID_MOVIE_GROUP_NAME = "Invalid movie group name";
     private final static String USER_ALREADY_EXISTS = "User already exists";
     private final static String USER_NOT_FOUND = "Could not find user";
+    private final static String TOO_MANY_RENTED_MOVIES = "Amount of rented movies exceeds 10";
+    private final static String MOVIE_NOT_AVAILABLE = "Movie not available";
+    private final static String MOVIE_NOT_RENTED = "Movie was not rented by user";
 
     @ExceptionHandler(DisallowedIdModificationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = DISALLOWED_ID)
@@ -56,5 +59,20 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = USER_NOT_FOUND)
     public void handleUserNotFound(UserNotFoundException e) {
+    }
+
+    @ExceptionHandler(TooManyRentedMoviesException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = TOO_MANY_RENTED_MOVIES)
+    public void handleTooManyRentedMovies(TooManyRentedMoviesException e) {
+    }
+
+    @ExceptionHandler(MovieNotAvailableException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = MOVIE_NOT_AVAILABLE)
+    public void handleMovieNotAvailable(MovieNotAvailableException e) {
+    }
+
+    @ExceptionHandler(MovieNotRentedException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = MOVIE_NOT_RENTED)
+    public void handleMovieNotRented(MovieNotRentedException e) {
     }
 }

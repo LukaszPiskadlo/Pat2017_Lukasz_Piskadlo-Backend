@@ -361,3 +361,136 @@ mvnw spring-boot:run
   }
 ]
 ```
+
+### Create user
+
+- Request:
+`POST http://localhost:8080/users`
+    - Header:
+        `Content-Type:application/json`
+    - Body:
+     ```
+     {
+         "name",
+         "lastName",
+         "email",
+         "password"
+     }
+     ```
+
+- Response:
+```
+{
+    "id": 1,
+    "name",
+    "lastName",
+    "email",
+    "password",
+    "amountOfRentedMovies"
+}
+```
+
+### Get movies rented by user
+
+- Request:
+`GET http://localhost:8080/users/{userId}`
+
+- Response:
+```
+[
+  {
+    "id",
+    "title",
+    "director",
+    "cast": [
+      {
+        "id",
+        "name",
+        "lastName",
+        "birthDate"
+      }
+    ],
+    "releaseDate",
+    "duration"
+  }
+]
+```
+
+### Rent movie
+
+- Request:
+`POST http://localhost:8080/users/{userId}/rent`
+    - Header:
+        `Content-Type:application/json`
+    - Body: List of movie ids
+    ```
+    [
+    	{movieId},
+    	{movieId}
+    ]
+    ```
+
+- Response:
+```
+{
+  "price",
+  "user": {
+    "id",
+    "name",
+    "lastName",
+    "amountOfRentedMovies"
+  },
+  "rentedMovies": [
+    {
+      "id",
+      "title",
+      "director",
+      "cast": [
+        {
+          "id",
+          "name",
+          "lastName"
+        }````
+      ],
+      "duration",
+      "amountAvailable",
+      "group"
+    }
+  ]
+}
+```   
+
+### Return movie
+
+- Request:
+    `POST http://localhost:8080/users/{userId/return`
+    - Header:
+        `Content-Type:application/json`
+    - Body: List of movie ids
+        ```
+        [
+            {movieId},
+            {movieId}
+        ]
+        ```
+
+- Response:
+```
+[
+  {
+    "id",
+    "title",
+    "director",
+    "cast": [
+      {
+        "id",
+        "name",
+        "lastName",
+        "birthDate"
+      }
+    ],
+    "releaseDate",
+    "duration"
+  }
+]
+```
