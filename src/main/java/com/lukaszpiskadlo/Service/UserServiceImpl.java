@@ -9,6 +9,7 @@ import com.lukaszpiskadlo.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
         movies.forEach(movie -> movie.setAmountAvailable(movie.getAmountAvailable() - 1));
 
-        double price = calculatePrice(movies);
+        BigDecimal price = calculatePrice(movies);
 
         userRepository.addRentedMovies(userId, idList);
 
@@ -123,15 +124,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private double calculatePrice(List<Movie> movies) {
-        double price = 0;
+    private BigDecimal calculatePrice(List<Movie> movies) {
+        BigDecimal price = new BigDecimal(0);
         int newMovieAmount = 0;
         int otherMovieAmount = 0;
 
         for (Movie movie : movies) {
             Movie.Group group = movie.getGroup();
 
-            price += group.getPrice();
+            price = price.add(group.getPrice());
 
             if (group == Movie.Group.NEW) {
                 newMovieAmount++;
@@ -142,11 +143,12 @@ public class UserServiceImpl implements UserService {
 
         if (movies.size() > AMOUNT_OF_MOVIES_FOR_BONUS
                 && otherMovieAmount >= AMOUNT_OF_BONUS_OTHER_MOVIES) {
-            price -= Movie.Group.OTHER.getPrice();
+            price = price.subtract(Movie.Group.OTHER.getPrice());
         }
 
         if (newMovieAmount >= NEW_MOVIES_AMOUNT_FOR_DISCOUNT) {
-            price *= 1 - DISCOUNT_FOR_NEW_MOVIES;
+            BigDecimal discount = new BigDecimal(1 - DISCOUNT_FOR_NEW_MOVIES);
+            price = price.multiply(discount);
         }
 
         return price;

@@ -2,12 +2,13 @@ package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Order {
 
-    private double price;
+    private BigDecimal price;
     private User user;
     private List<Movie> rentedMovies;
 
@@ -20,11 +21,11 @@ public class Order {
         this.rentedMovies = builder.rentedMovies;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -45,15 +46,15 @@ public class Order {
     }
 
     public static class Builder {
-        private double price;
+        private BigDecimal price;
         private User user;
         private List<Movie> rentedMovies;
 
         public Builder() {
         }
 
-        public Builder price(double price) {
-            this.price = price;
+        public Builder price(BigDecimal price) {
+            this.price = price.setScale(2, BigDecimal.ROUND_HALF_UP);
             return this;
         }
 

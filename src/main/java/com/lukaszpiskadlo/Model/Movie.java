@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,17 +159,17 @@ public class Movie {
     }
 
     public enum Group {
-        NEW(12),
-        HIT(10),
-        OTHER(7);
+        NEW("12.50"),
+        HIT("10"),
+        OTHER("7.30");
 
-        private double price;
+        private BigDecimal price;
 
-        Group(double price) {
-            this.price = price;
+        Group(String price) {
+            this.price = new BigDecimal(price).setScale(2, BigDecimal.ROUND_HALF_UP);
         }
 
-        public double getPrice() {
+        public BigDecimal getPrice() {
             return price;
         }
     }
