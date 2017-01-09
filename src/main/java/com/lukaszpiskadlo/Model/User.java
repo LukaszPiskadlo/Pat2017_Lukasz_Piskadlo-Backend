@@ -2,6 +2,7 @@ package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class User {
     private String name;
     @NotEmpty
     private String lastName;
+    @Email
     private String email;
     private String password;
     @JsonIgnore
