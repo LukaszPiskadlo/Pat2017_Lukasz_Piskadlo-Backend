@@ -20,6 +20,7 @@ public class ControllerExceptionHandler {
     private final static String TOO_MANY_RENTED_MOVIES = "Amount of rented movies exceeds 10";
     private final static String MOVIE_NOT_AVAILABLE = "Movie not available";
     private final static String MOVIE_NOT_RENTED = "Movie was not rented by user";
+    private final static String MOVIE_ALREADY_RENTED = "Movie already rented by user";
 
     @ExceptionHandler(DisallowedIdModificationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = DISALLOWED_ID)
@@ -74,5 +75,10 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(MovieNotRentedException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = MOVIE_NOT_RENTED)
     public void handleMovieNotRented(MovieNotRentedException e) {
+    }
+
+    @ExceptionHandler(MovieAlreadyRentedException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = MOVIE_ALREADY_RENTED)
+    public void handleMovieAlreadyRented(MovieAlreadyRentedException e) {
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -63,6 +64,7 @@ public class UserServiceImpl implements UserService {
         List<Movie> movies = getMoviesFromIds(idList);
         checkMaxRentedMoviesAmount(user, movies.size());
         checkMoviesAvailability(movies);
+        checkUserRentedMovies(user, movies);
 
         movies.forEach(movie -> movie.setAmountAvailable(movie.getAmountAvailable() - 1));
 
@@ -159,5 +161,12 @@ public class UserServiceImpl implements UserService {
                 .filter(m -> m.getAmountAvailable() <= 0)
                 .findAny()
                 .ifPresent(m -> { throw new MovieNotAvailableException(); });
+    }
+
+    private void checkUserRentedMovies(User user, List<Movie> movies) {
+        List<Movie> rentedMovies = userRepository.getUserRentedMovies(user.getId());
+        if (!Collections.disjoint(movies, rentedMovies)) {
+            throw new MovieAlreadyRentedException();
+        }
     }
 }
