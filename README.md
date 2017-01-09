@@ -138,7 +138,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate",
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
 ]
 ```
@@ -163,7 +165,9 @@ mvnw spring-boot:run
     }
   ],
   "releaseDate",
-  "duration"
+  "duration",
+  "amountAvailable",
+  "group"
 }
 ```
 
@@ -186,7 +190,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate"
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
   ```
   
@@ -205,7 +211,9 @@ mvnw spring-boot:run
     }
   ],
   "releaseDate",
-  "duration"
+  "duration",
+  "amountAvailable",
+  "group"
 }
 ```
 
@@ -229,7 +237,9 @@ mvnw spring-boot:run
     }
   ],
   "releaseDate",
-  "duration"
+  "duration",
+  "amountAvailable",
+  "group"
 }
 ```
 
@@ -251,8 +261,10 @@ mvnw spring-boot:run
         "birthDate"
       }
     ],
-    "releaseDate"
-    "duration"
+    "releaseDate",
+    "duration",
+    "amountAvailable",
+    "group"
   }
   ```
   
@@ -271,7 +283,9 @@ mvnw spring-boot:run
     }
   ],
   "releaseDate",
-  "duration"
+  "duration",
+  "amountAvailable",
+  "group"
 }
 ```
 
@@ -305,7 +319,9 @@ mvnw spring-boot:run
     }
   ],
   "releaseDate",
-  "duration"
+  "duration",
+  "amountAvailable",
+  "group"
 }
 ```
 
@@ -330,7 +346,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate",
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
 ]
 ```
@@ -357,7 +375,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate",
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
 ]
 ```
@@ -381,11 +401,10 @@ mvnw spring-boot:run
 - Response:
 ```
 {
-    "id": 1,
+    "id",
     "name",
     "lastName",
     "email",
-    "password",
     "amountOfRentedMovies"
 }
 ```
@@ -411,7 +430,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate",
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
 ]
 ```
@@ -450,8 +471,9 @@ mvnw spring-boot:run
           "id",
           "name",
           "lastName"
-        }````
+        }
       ],
+      "releaseDate",
       "duration",
       "amountAvailable",
       "group"
@@ -490,7 +512,9 @@ mvnw spring-boot:run
       }
     ],
     "releaseDate",
-    "duration"
+    "duration",
+    "amountAvailable",
+    "group"
   }
 ]
 ```
