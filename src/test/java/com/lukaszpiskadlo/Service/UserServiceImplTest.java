@@ -21,7 +21,7 @@ public class UserServiceImplTest {
     private final static String NAME = "User";
     private final static String LAST_NAME = "LastName";
 
-    private UserService userService;
+    private UserServiceImpl userService;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -43,8 +43,6 @@ public class UserServiceImplTest {
                 .lastName(LAST_NAME)
                 .build();
 
-        when(userRepository.getUser(id)).thenReturn(null);
-
         userService.create(user);
     }
 
@@ -56,7 +54,7 @@ public class UserServiceImplTest {
                 .build();
 
         userService.create(user);
-        verify(userRepository).addUser(user);
+        verify(userRepository).save(user);
     }
 
     @Test(expected = UserNotFoundException.class)
@@ -70,10 +68,12 @@ public class UserServiceImplTest {
                 .name(NAME)
                 .lastName(LAST_NAME)
                 .build();
-        when(userRepository.getUser(anyLong())).thenReturn(user);
+
+        when(userRepository.exists(anyLong())).thenReturn(true);
+        when(userRepository.findOne(anyLong())).thenReturn(user);
 
         userService.findRentedMovies(anyLong());
-        verify(userRepository).getUserRentedMovies(anyLong());
+        verify(userRepository).findOne(anyLong());
     }
 
     @Test(expected = UserNotFoundException.class)

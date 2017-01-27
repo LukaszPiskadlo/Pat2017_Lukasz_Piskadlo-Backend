@@ -1,18 +1,10 @@
 package com.lukaszpiskadlo.Repository;
 
-import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MovieRepository {
-    Movie getMovie(long id);
-    List<Movie> getAllMovies();
-    Movie addMovie(Movie movie);
-    Movie updateMovie(long id, Movie movie);
-    Movie removeMovie(long id);
-    Movie addActorToMovie(long id, Actor actor);
-    void removeAllMovies();
-    List<Movie> getMoviesByGroup(Movie.Group group);
-    List<Movie> getAvailableMovies();
+public interface MovieRepository extends JpaRepository<Movie, Long> {
+    List<Movie> findByGroup(Movie.Group group);
 }

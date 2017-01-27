@@ -3,26 +3,41 @@ package com.lukaszpiskadlo.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.*;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Entity
 public class Movie {
 
+    @Id
+    @GeneratedValue
     private long id;
     @NotEmpty
     private String title;
     @NotEmpty
     private String director;
     @Valid
+    @ManyToMany(cascade = {CascadeType.PERSIST,  CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "movie_cast",
+            joinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id")
+    )
     private List<Actor> cast;
     private String releaseDate;
     private int duration;
 
     private int amountAvailable;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "price_group")
     private Group group;
+
+    @ManyToMany(mappedBy = "rentedMovies",
+            cascade = {CascadeType.PERSIST,  CascadeType.MERGE})
+    private List<User> users;
 
     public Movie() {
     }
@@ -96,6 +111,29 @@ public class Movie {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    @PreRemove
+    private void removeFromUser() {
+        users.forEach(user -> {
+            List<Movie> movies = user.getRentedMovies();
+            movies.remove(this);
+        });
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        return id == movie.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
     }
 
     public static class Builder {

@@ -23,22 +23,16 @@ public class MovieRepositoryInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
-        Actor actor1 = new Actor.Builder()
-                .name("Actor1")
-                .lastName("Actor1")
-                .build();
-
-        Actor actor2 = new Actor.Builder()
-                .name("Actor2")
-                .lastName("Actor2")
-                .build();
-
-        List<Actor> actors = new ArrayList<>();
-        actors.add(actor1);
-        actors.add(actor2);
-
         for (Movie.Group group : Movie.Group.values()) {
             for (int i = 1; i <= 10; i++) {
+                Actor actor = new Actor.Builder()
+                        .name("Actor " + group + " " + i)
+                        .lastName("Actor")
+                        .build();
+
+                List<Actor> actors = new ArrayList<>();
+                actors.add(actor);
+
                 Movie movie = new Movie.Builder()
                         .title("Movie " + group + " " + i)
                         .director("Director")
@@ -48,7 +42,7 @@ public class MovieRepositoryInitializer implements ApplicationRunner {
                         .group(group)
                         .build();
 
-                movieRepository.addMovie(movie);
+                movieRepository.save(movie);
             }
         }
     }

@@ -3,15 +3,23 @@ package com.lukaszpiskadlo.Model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.*;
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Entity
 public class Actor {
 
+    @Id
+    @GeneratedValue
     private long id;
     @NotEmpty
     private String name;
     @NotEmpty
     private String lastName;
     private String birthDate;
+    @ManyToMany(mappedBy = "cast", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST,  CascadeType.MERGE})
+    private List<Movie> movies;
 
     public Actor() {
     }
@@ -49,6 +57,14 @@ public class Actor {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+    }
+
+    @PreRemove
+    private void removeFromMovies() {
+        movies.forEach(movie -> {
+            List<Actor> cast = movie.getCast();
+            cast.remove(this);
+        });
     }
 
     public static class Builder {

@@ -1,7 +1,9 @@
 package com.lukaszpiskadlo.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Model.User;
+import com.lukaszpiskadlo.Service.MovieService;
 import com.lukaszpiskadlo.Service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,6 +41,9 @@ public class UserControllerTest {
     private UserService userService;
 
     @Autowired
+    private MovieService movieService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private MockMvc mockMvc;
@@ -45,8 +51,8 @@ public class UserControllerTest {
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(new UserController(userService)).build();
-
         userService.deleteAllUsers();
+        movieService.deleteAllMovies();
     }
 
     @Test
@@ -84,9 +90,18 @@ public class UserControllerTest {
                 .build();
 
         user = userService.create(user);
+
+        Movie movie = new Movie.Builder()
+                .title("Movie")
+                .director("Director")
+                .amountAvailable(10)
+                .group(Movie.Group.NEW)
+                .build();
+        movie = movieService.create(movie);
+
         mockMvc.perform(post(PATH + "/" + user.getId() + "/rent")
                     .contentType(contentType)
-                    .content(objectMapper.writeValueAsString(new long[] {1, 2})))
+                    .content(objectMapper.writeValueAsString(new long[] {movie.getId()})))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType));
     }
@@ -100,14 +115,24 @@ public class UserControllerTest {
 
         user = userService.create(user);
 
-        List<Long> id = new ArrayList<>();
-        id.add(1L);
-        id.add(2L);
-        user.setRentedMoviesIds(id);
+        Movie movie = new Movie.Builder()
+                .title("Movie")
+                .director("Director")
+                .amountAvailable(10)
+                .group(Movie.Group.NEW)
+                .build();
+        movie = movieService.create(movie);
+
+        HashSet<Long> rentIds = new HashSet<>();
+        rentIds.add(movie.getId());
+        userService.rentMovie(user.getId(), rentIds);
+
+        List<Long> ids = new ArrayList<>();
+        ids.add(movie.getId());
 
         mockMvc.perform(post(PATH + "/" + user.getId() + "/return")
                     .contentType(contentType)
-                    .content(objectMapper.writeValueAsString(id.toArray())))
+                    .content(objectMapper.writeValueAsString(ids.toArray())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType));
     }

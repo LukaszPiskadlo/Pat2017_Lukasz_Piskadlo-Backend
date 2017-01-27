@@ -5,15 +5,21 @@ import com.lukaszpiskadlo.Exception.InvalidMovieGroupNameException;
 import com.lukaszpiskadlo.Exception.MovieAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.MovieNotFoundException;
 import com.lukaszpiskadlo.Model.Movie;
-import com.lukaszpiskadlo.Repository.MainRepository;
+import com.lukaszpiskadlo.Repository.ActorRepository;
 import com.lukaszpiskadlo.Repository.MovieRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class MovieServiceImplTest {
 
@@ -23,22 +29,31 @@ public class MovieServiceImplTest {
 
     private MovieServiceImpl movieService;
 
+    @Mock
+    private MovieRepository repository;
+
+    @Mock
+    private ActorRepository actorRepository;
+
     @Before
     public void setUp() throws Exception {
-        MovieRepository repository = new MainRepository();
-        movieService = new MovieServiceImpl(repository);
+        MockitoAnnotations.initMocks(this);
+
+        movieService = new MovieServiceImpl(repository, actorRepository);
 
         movieService.deleteAllMovies();
     }
 
     @Test(expected = MovieNotFoundException.class)
     public void findById_MovieNotFound() throws Exception {
-        movieService.findById(ID);
+        when(repository.exists(anyLong())).thenReturn(false);
+        movieService.findById(anyLong());
     }
 
     @Test(expected = MovieNotFoundException.class)
     public void delete_MovieNotFound() throws Exception {
-        movieService.delete(ID);
+        when(repository.exists(anyLong())).thenReturn(false);
+        movieService.delete(anyLong());
     }
 
     @Test(expected = MovieNotFoundException.class)
@@ -48,7 +63,8 @@ public class MovieServiceImplTest {
                 .director(DIRECTOR)
                 .build();
 
-        movieService.update(ID, movie);
+        when(repository.exists(anyLong())).thenReturn(false);
+        movieService.update(anyLong(), movie);
     }
 
     @Test(expected = DisallowedIdModificationException.class)
@@ -70,15 +86,8 @@ public class MovieServiceImplTest {
                 .director(DIRECTOR)
                 .build();
 
-        Movie created = movieService.create(movie);
-
-        movie = new Movie.Builder()
-                .id(ID)
-                .title(TITLE)
-                .director(DIRECTOR)
-                .build();
-
-        movieService.update(created.getId(), movie);
+        when(repository.exists(ID)).thenReturn(false);
+        movieService.update(ID, movie);
     }
 
     @Test(expected = MovieAlreadyExistsException.class)
@@ -88,7 +97,10 @@ public class MovieServiceImplTest {
                 .director(DIRECTOR)
                 .build();
 
-        movieService.create(movie);
+        List<Movie> movies = new ArrayList<>();
+        movies.add(movie);
+        when(repository.findAll()).thenReturn(movies);
+
         movieService.create(movie);
     }
 
@@ -99,37 +111,21 @@ public class MovieServiceImplTest {
                 .director(DIRECTOR)
                 .build();
 
-        Movie result = movieService.create(movie);
-
-        assertEquals(movie.getTitle(), result.getTitle());
-        assertEquals(movie.getDirector(), result.getDirector());
+        movieService.create(movie);
+        verify(repository).save(movie);
     }
 
     @Test
     public void findAll() throws Exception {
-        Movie movie = new Movie.Builder()
-                .title(TITLE)
-                .director(DIRECTOR)
-                .build();
-
-        Movie created = movieService.create(movie);
-        List<Movie> result = movieService.findAll();
-
-        assertTrue(result.contains(created));
+        movieService.findAll();
+        verify(repository).findAll();
     }
 
     @Test
     public void findById() throws Exception {
-        Movie movie = new Movie.Builder()
-                .title(TITLE)
-                .director(DIRECTOR)
-                .build();
-
-        Movie created = movieService.create(movie);
-        Movie result = movieService.findById(created.getId());
-
-        assertEquals(created.getTitle(), result.getTitle());
-        assertEquals(created.getDirector(), result.getDirector());
+        when(repository.exists(anyLong())).thenReturn(true);
+        movieService.findById(anyLong());
+        verify(repository).findOne(anyLong());
     }
 
     @Test
@@ -139,31 +135,16 @@ public class MovieServiceImplTest {
                 .director(DIRECTOR)
                 .build();
 
-        Movie created = movieService.create(movie);
-
-        Movie newMovie = new Movie.Builder()
-                .title("New Title")
-                .director("New Director")
-                .build();
-
-        Movie updated = movieService.update(created.getId(), newMovie);
-
-        assertEquals(newMovie.getTitle(), updated.getTitle());
-        assertEquals(newMovie.getDirector(), updated.getDirector());
+        when(repository.exists(anyLong())).thenReturn(true);
+        movieService.update(anyLong(), movie);
+        verify(repository).save(any(Movie.class));
     }
 
     @Test
     public void delete() throws Exception {
-        Movie movie = new Movie.Builder()
-                .title(TITLE)
-                .director(DIRECTOR)
-                .build();
-
-        Movie created = movieService.create(movie);
-        Movie result = movieService.delete(created.getId());
-
-        assertEquals(created.getTitle(), result.getTitle());
-        assertEquals(created.getDirector(), result.getDirector());
+        when(repository.exists(anyLong())).thenReturn(true);
+        movieService.delete(anyLong());
+        verify(repository).delete(anyLong());
     }
 
     @Test(expected = InvalidMovieGroupNameException.class)
@@ -172,17 +153,21 @@ public class MovieServiceImplTest {
     }
 
     @Test
-    public void findByGroup() throws Exception {
-        Movie movie = new Movie.Builder()
-                .title(TITLE)
-                .director(DIRECTOR)
-                .group(Movie.Group.NEW)
-                .build();
+    public void findByGroup_New() throws Exception {
+        movieService.findByGroup("new");
+        verify(repository).findByGroup(Movie.Group.NEW);
+    }
 
-        Movie created = movieService.create(movie);
-        List<Movie> result = movieService.findByGroup("new");
+    @Test
+    public void findByGroup_Hit() throws Exception {
+        movieService.findByGroup("hit");
+        verify(repository).findByGroup(Movie.Group.HIT);
+    }
 
-        assertTrue(result.contains(created));
+    @Test
+    public void findByGroup_Other() throws Exception {
+        movieService.findByGroup("other");
+        verify(repository).findByGroup(Movie.Group.OTHER);
     }
 
     @Test
@@ -193,9 +178,11 @@ public class MovieServiceImplTest {
                 .amountAvailable(0)
                 .build();
 
-        movieService.create(movie);
-        List<Movie> result = movieService.findAvailable();
+        List<Movie> movies = new ArrayList<>();
+        movies.add(movie);
+        when(repository.findAll()).thenReturn(movies);
 
+        List<Movie> result = movieService.findAvailable();
         assertTrue(result.isEmpty());
     }
 
@@ -207,9 +194,11 @@ public class MovieServiceImplTest {
                 .amountAvailable(4)
                 .build();
 
-        Movie created = movieService.create(movie);
-        List<Movie> result = movieService.findAvailable();
+        List<Movie> movies = new ArrayList<>();
+        movies.add(movie);
+        when(repository.findAll()).thenReturn(movies);
 
-        assertTrue(result.contains(created));
+        List<Movie> result = movieService.findAvailable();
+        assertTrue(!result.isEmpty());
     }
 }

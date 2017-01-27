@@ -1,5 +1,6 @@
 package com.lukaszpiskadlo.Service;
 
+import com.lukaszpiskadlo.Exception.ActorAlreadyExistsException;
 import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
 import com.lukaszpiskadlo.Model.Actor;
@@ -25,21 +26,26 @@ public class ActorServiceImpl implements ActorService {
             throw new DisallowedIdModificationException();
         }
 
-        return repository.addActor(actor);
+        repository.findAll().stream()
+                .filter(a -> a.getName().equals(actor.getName()))
+                .filter(a -> a.getLastName().equals(actor.getLastName()))
+                .findAny()
+                .ifPresent(a -> { throw new ActorAlreadyExistsException(); });
+
+        return repository.save(actor);
     }
 
     @Override
     public List<Actor> findAll() {
-        return repository.getAllActors();
+        return repository.findAll();
     }
 
     @Override
     public Actor findById(long id) {
-        Actor actor = repository.getActor(id);
-        if (actor == null) {
+        if (!repository.exists(id)) {
             throw new ActorNotFoundException();
         }
-        return actor;
+        return repository.findOne(id);
     }
 
     @Override
@@ -48,25 +54,34 @@ public class ActorServiceImpl implements ActorService {
             throw new DisallowedIdModificationException();
         }
 
-        Actor oldActor = repository.getActor(id);
-        if (oldActor == null) {
+        if (!repository.exists(id)) {
             throw new ActorNotFoundException();
         }
 
-        return repository.updateActor(id, actor);
+        Actor updatedActor = new Actor.Builder()
+                .id(id)
+                .name(actor.getName())
+                .lastName(actor.getLastName())
+                .birthDate(actor.getBirthDate())
+                .build();
+
+        return repository.save(updatedActor);
     }
 
     @Override
     public Actor delete(long id) {
-        Actor actor = repository.getActor(id);
-        if (actor == null) {
+        if (!repository.exists(id)) {
             throw new ActorNotFoundException();
         }
-        return repository.removeActor(id);
+
+        Actor removedActor = repository.findOne(id);
+        repository.delete(id);
+
+        return removedActor;
     }
 
     @Override
     public void deleteAllActors() {
-        repository.removeAllActors();
+        repository.deleteAllInBatch();
     }
 }

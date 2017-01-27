@@ -47,7 +47,7 @@ public class MovieController {
         return movieService.update(movieId, movie);
     }
 
-    @PostMapping(value = "/{movieId}/actor", consumes = "application/json")
+    @PostMapping(value = "/{movieId}/actors", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public Movie addActorToMovie(@PathVariable long movieId, @Valid @RequestBody Actor actor) {
         return movieService.addActorToMovie(movieId, actor);

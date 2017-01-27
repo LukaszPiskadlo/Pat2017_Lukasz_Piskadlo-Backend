@@ -5,16 +5,20 @@ import com.lukaszpiskadlo.Exception.ActorNotFoundException;
 import com.lukaszpiskadlo.Exception.DisallowedIdModificationException;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Repository.ActorRepository;
-import com.lukaszpiskadlo.Repository.MainRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class ActorServiceImplTest {
@@ -25,9 +29,13 @@ public class ActorServiceImplTest {
 
     private ActorServiceImpl actorService;
 
+    @Mock
+    private ActorRepository repository;
+
     @Before
     public void setUp() throws Exception {
-        ActorRepository repository = new MainRepository();
+        MockitoAnnotations.initMocks(this);
+
         actorService = new ActorServiceImpl(repository);
 
         actorService.deleteAllActors();
@@ -35,12 +43,14 @@ public class ActorServiceImplTest {
 
     @Test(expected = ActorNotFoundException.class)
     public void findById_ActorNotFound() throws Exception {
-        actorService.findById(ID);
+        when(repository.exists(anyLong())).thenReturn(false);
+        actorService.findById(anyLong());
     }
 
     @Test(expected = ActorNotFoundException.class)
     public void delete_ActorNotFound() throws Exception {
-        actorService.delete(ID);
+        when(repository.exists(anyLong())).thenReturn(false);
+        actorService.delete(anyLong());
     }
 
     @Test(expected = ActorNotFoundException.class)
@@ -50,7 +60,8 @@ public class ActorServiceImplTest {
                 .lastName(LAST_NAME)
                 .build();
 
-        actorService.update(ID, actor);
+        when(repository.exists(anyLong())).thenReturn(false);
+        actorService.update(anyLong(), actor);
     }
 
     @Test(expected = DisallowedIdModificationException.class)
@@ -67,19 +78,13 @@ public class ActorServiceImplTest {
     @Test(expected = DisallowedIdModificationException.class)
     public void update_DisallowedIdModification() throws Exception {
         Actor actor = new Actor.Builder()
-                .name(NAME)
-                .lastName(LAST_NAME)
-                .build();
-
-        Actor created = actorService.create(actor);
-
-        actor = new Actor.Builder()
                 .id(ID)
                 .name(NAME)
                 .lastName(LAST_NAME)
                 .build();
 
-        actorService.update(created.getId(), actor);
+        when(repository.exists(ID)).thenReturn(false);
+        actorService.update(ID, actor);
     }
 
     @Test(expected = ActorAlreadyExistsException.class)
@@ -89,7 +94,10 @@ public class ActorServiceImplTest {
                 .lastName(LAST_NAME)
                 .build();
 
-        actorService.create(actor);
+        List<Actor> actors = new ArrayList<>();
+        actors.add(actor);
+        when(repository.findAll()).thenReturn(actors);
+
         actorService.create(actor);
     }
 
@@ -100,51 +108,28 @@ public class ActorServiceImplTest {
                 .lastName(LAST_NAME)
                 .build();
 
-        Actor result = actorService.create(actor);
-
-        assertEquals(actor.getName(), result.getName());
-        assertEquals(actor.getLastName(), result.getLastName());
+        actorService.create(actor);
+        verify(repository).save(actor);
     }
 
     @Test
     public void findById() throws Exception {
-        Actor actor = new Actor.Builder()
-                .name(NAME)
-                .lastName(LAST_NAME)
-                .build();
-
-        Actor created = actorService.create(actor);
-        Actor result = actorService.findById(created.getId());
-
-        assertEquals(created.getName(), result.getName());
-        assertEquals(created.getLastName(), result.getLastName());
+        when(repository.exists(anyLong())).thenReturn(true);
+        actorService.findById(anyLong());
+        verify(repository).findOne(anyLong());
     }
 
     @Test
     public void delete() throws Exception {
-        Actor actor = new Actor.Builder()
-                .name(NAME)
-                .lastName(LAST_NAME)
-                .build();
-
-        Actor created = actorService.create(actor);
-        Actor result = actorService.delete(created.getId());
-
-        assertEquals(created.getName(), result.getName());
-        assertEquals(created.getLastName(), result.getLastName());
+        when(repository.exists(anyLong())).thenReturn(true);
+        actorService.delete(anyLong());
+        verify(repository).delete(anyLong());
     }
 
     @Test
     public void findAll() throws Exception {
-        Actor actor = new Actor.Builder()
-                .name(NAME)
-                .lastName(LAST_NAME)
-                .build();
-
-        Actor created = actorService.create(actor);
-        List<Actor> result = actorService.findAll();
-
-        assertTrue(result.contains(created));
+        actorService.findAll();
+        verify(repository).findAll();
     }
 
     @Test
@@ -154,16 +139,8 @@ public class ActorServiceImplTest {
                 .lastName(LAST_NAME)
                 .build();
 
-        Actor created = actorService.create(actor);
-
-        Actor newActor = new Actor.Builder()
-                .name("New Name")
-                .lastName("New Last Name")
-                .build();
-
-        Actor updated = actorService.update(created.getId(), newActor);
-
-        assertEquals(newActor.getName(), updated.getName());
-        assertEquals(newActor.getLastName(), updated.getLastName());
+        when(repository.exists(anyLong())).thenReturn(true);
+        actorService.update(anyLong(), actor);
+        verify(repository).save(any(Actor.class));
     }
 }

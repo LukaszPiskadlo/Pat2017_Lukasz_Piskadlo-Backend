@@ -39,28 +39,32 @@ public class UserServiceImpl implements UserService {
             throw new DisallowedIdModificationException();
         }
 
-        return userRepository.addUser(user);
+        userRepository.findAll().stream()
+                .filter(u -> u.getName().equals(user.getName()))
+                .findAny()
+                .ifPresent(u -> { throw new UserAlreadyExistsException(); });
+
+        return userRepository.save(user);
     }
 
     @Override
     public List<Movie> findRentedMovies(long id) {
-        User user = userRepository.getUser(id);
-        if (user == null) {
+        if (!userRepository.exists(id)) {
             throw new UserNotFoundException();
         }
 
-        return userRepository.getUserRentedMovies(id);
+        return userRepository.findOne(id).getRentedMovies();
     }
 
     @Override
     public Order rentMovie(long userId, Set<Long> movieIds) {
         List<Long> idList = new ArrayList<>(movieIds);
 
-        User user = userRepository.getUser(userId);
-        if (user == null) {
+        if (!userRepository.exists(userId)) {
             throw new UserNotFoundException();
         }
 
+        User user = userRepository.findOne(userId);
         List<Movie> movies = getMoviesFromIds(idList);
         checkMaxRentedMoviesAmount(user, movies.size());
         checkMoviesAvailability(movies);
@@ -70,7 +74,8 @@ public class UserServiceImpl implements UserService {
 
         BigDecimal price = calculatePrice(movies);
 
-        userRepository.addRentedMovies(userId, idList);
+        user.addAllRentedMovies(movies);
+        userRepository.save(user);
 
         return new Order.Builder()
                 .user(user)
@@ -83,13 +88,12 @@ public class UserServiceImpl implements UserService {
     public List<Movie> returnMovie(long userId, Set<Long> movieIds) {
         List<Long> idList = new ArrayList<>(movieIds);
 
-        User user = userRepository.getUser(userId);
-        if (user == null) {
+        if (!userRepository.exists(userId)) {
             throw new UserNotFoundException();
         }
 
         List<Movie> movies = getMoviesFromIds(idList);
-        List<Movie> rentedMovies = userRepository.getUserRentedMovies(userId);
+        List<Movie> rentedMovies = userRepository.findOne(userId).getRentedMovies();
 
         if (!rentedMovies.containsAll(movies)) {
             throw new MovieNotRentedException();
@@ -97,24 +101,25 @@ public class UserServiceImpl implements UserService {
 
         movies.forEach(movie -> movie.setAmountAvailable(movie.getAmountAvailable() + 1));
 
-        userRepository.removeRentedMovie(userId, idList);
+        User user = userRepository.findOne(userId);
+        user.removeAllRentedMovies(movies);
+        userRepository.save(user);
 
         return movies;
     }
 
     @Override
     public void deleteAllUsers() {
-        userRepository.removeAllUsers();
+        userRepository.deleteAllInBatch();
     }
 
     private List<Movie> getMoviesFromIds(List<Long> movieIds) {
         List<Movie> movies = new ArrayList<>();
         for (Long id : movieIds) {
-            Movie movie = movieRepository.getMovie(id);
-            if (movie == null) {
+            if (!movieRepository.exists(id)) {
                 throw new MovieNotFoundException();
             }
-            movies.add(movie);
+            movies.add(movieRepository.findOne(id));
         }
 
         return movies;
@@ -164,7 +169,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkUserRentedMovies(User user, List<Movie> movies) {
-        List<Movie> rentedMovies = userRepository.getUserRentedMovies(user.getId());
+        List<Movie> rentedMovies = userRepository.findOne(user.getId()).getRentedMovies();
         if (!Collections.disjoint(movies, rentedMovies)) {
             throw new MovieAlreadyRentedException();
         }

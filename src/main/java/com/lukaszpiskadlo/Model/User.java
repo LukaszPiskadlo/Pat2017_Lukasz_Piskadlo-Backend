@@ -5,12 +5,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Entity
 public class User {
 
+    @Id
+    @GeneratedValue
     private long id;
     @NotEmpty
     private String name;
@@ -20,9 +24,15 @@ public class User {
     private String email;
     private String password;
     @JsonIgnore
-    private List<Long> rentedMoviesIds;
+    @ManyToMany(cascade = {CascadeType.PERSIST,  CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_movies",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id", referencedColumnName = "id")
+    )
+    private List<Movie> rentedMovies;
 
     public User() {
+        rentedMovies = new ArrayList<>();
     }
 
     private User(Builder builder) {
@@ -31,7 +41,7 @@ public class User {
         this.lastName = builder.lastName;
         this.email = builder.email;
         this.password = builder.password;
-        this.rentedMoviesIds = builder.rentedMoviesIds;
+        this.rentedMovies = builder.rentedMovies;
     }
 
     public long getId() {
@@ -71,32 +81,32 @@ public class User {
         this.email = email;
     }
 
-    public List<Long> getRentedMoviesIds() {
-        return rentedMoviesIds;
+    public List<Movie> getRentedMovies() {
+        return rentedMovies;
     }
 
-    public void setRentedMoviesIds(List<Long> rentedMoviesIds) {
-        this.rentedMoviesIds = rentedMoviesIds;
+    public void setRentedMovies(List<Movie> rentedMovies) {
+        this.rentedMovies = rentedMovies;
     }
 
-    public void addRentedMovieId(long id) {
-        rentedMoviesIds.add(id);
+    public void addRentedMovie(Movie movie) {
+        rentedMovies.add(movie);
     }
 
-    public void addAllRentedMoviesIds(List<Long> ids) {
-        rentedMoviesIds.addAll(ids);
+    public void addAllRentedMovies(List<Movie> movies) {
+        rentedMovies.addAll(movies);
     }
 
-    public void removeRentedMovieId(long id) {
-        rentedMoviesIds.remove(id);
+    public void removeRentedMovie(Movie movie) {
+        rentedMovies.remove(movie);
     }
 
-    public void removeAllRentedMoviesIds(List<Long> ids) {
-        rentedMoviesIds.removeAll(ids);
+    public void removeAllRentedMovies(List<Movie> movies) {
+        rentedMovies.removeAll(movies);
     }
 
     public int getAmountOfRentedMovies() {
-        return rentedMoviesIds.size();
+        return rentedMovies.size();
     }
 
     public static class Builder {
@@ -105,10 +115,10 @@ public class User {
         private String lastName;
         private String email;
         private String password;
-        private List<Long> rentedMoviesIds;
+        private List<Movie> rentedMovies;
 
         public Builder() {
-            rentedMoviesIds = new ArrayList<>();
+            rentedMovies = new ArrayList<>();
         }
 
         public Builder id(long id) {
@@ -136,8 +146,8 @@ public class User {
             return this;
         }
 
-        public Builder rentedMoviesIds(List<Long> rentedMoviesIds) {
-            this.rentedMoviesIds = rentedMoviesIds;
+        public Builder rentedMovies(List<Movie> rentedMovies) {
+            this.rentedMovies = rentedMovies;
             return this;
         }
 
