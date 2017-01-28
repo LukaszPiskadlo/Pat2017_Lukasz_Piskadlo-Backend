@@ -4,6 +4,7 @@ import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Service.ActorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class ActorController {
         return actorService.findById(actorId);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Actor createActor(@Valid @RequestBody Actor actor) {
         return actorService.create(actor);
@@ -41,7 +42,7 @@ public class ActorController {
         return actorService.delete(actorId);
     }
 
-    @PutMapping(value = "/{actorId}", consumes = "application/json")
+    @PutMapping(value = "/{actorId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Actor updateActor(@PathVariable long actorId, @Valid @RequestBody Actor actor) {
         return actorService.update(actorId, actor);
     }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,7 +25,7 @@ public class MovieController {
         this.movieService = movieService;
     }
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public PagedResources findAllMovies(Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
         return assembler.toResource(movieService.findAll(pageable));
     }
@@ -34,7 +35,7 @@ public class MovieController {
         return movieService.findById(movieId);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Movie createMovie(@Valid @RequestBody Movie movie) {
         return movieService.create(movie);
@@ -45,12 +46,12 @@ public class MovieController {
         return movieService.delete(movieId);
     }
 
-    @PutMapping(value = "/{movieId}", consumes = "application/json")
+    @PutMapping(value = "/{movieId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Movie updateMovie(@PathVariable long movieId, @Valid @RequestBody Movie movie) {
         return movieService.update(movieId, movie);
     }
 
-    @PostMapping(value = "/{movieId}/actors", consumes = "application/json")
+    @PostMapping(value = "/{movieId}/actors", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Movie addActorToMovie(@PathVariable long movieId, @Valid @RequestBody Actor actor) {
         return movieService.addActorToMovie(movieId, actor);
