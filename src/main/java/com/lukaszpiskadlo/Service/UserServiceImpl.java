@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        if (user.getId() != 0) {
+        if (user.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 

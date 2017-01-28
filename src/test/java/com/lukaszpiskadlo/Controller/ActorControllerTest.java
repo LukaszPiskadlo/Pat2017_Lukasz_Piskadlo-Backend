@@ -72,7 +72,7 @@ public class ActorControllerTest {
         mockMvc.perform(get(PATH + "/" + created.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$.id", is((int)created.getId())));
+                .andExpect(jsonPath("$.id", is(created.getId().intValue())));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ActorControllerTest {
         mockMvc.perform(delete(PATH + "/" + created.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$.id", is((int)created.getId())));
+                .andExpect(jsonPath("$.id", is(created.getId().intValue())));
     }
 
     @Test

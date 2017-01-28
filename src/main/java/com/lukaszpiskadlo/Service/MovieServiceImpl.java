@@ -29,7 +29,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie create(Movie movie) {
-        if (movie.getId() != 0) {
+        if (movie.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 
@@ -67,7 +67,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie update(long id, Movie movie) {
-        if (movie.getId() != 0) {
+        if (movie.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 
@@ -103,7 +103,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie addActorToMovie(long id, Actor actor) {
-        if (actor.getId() != 0) {
+        if (actor.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 

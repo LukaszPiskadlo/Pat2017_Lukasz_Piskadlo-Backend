@@ -22,7 +22,7 @@ public class ActorServiceImpl implements ActorService {
 
     @Override
     public Actor create(Actor actor) {
-        if (actor.getId() != 0) {
+        if (actor.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 
@@ -50,7 +50,7 @@ public class ActorServiceImpl implements ActorService {
 
     @Override
     public Actor update(long id, Actor actor) {
-        if (actor.getId() != 0) {
+        if (actor.getId() != null) {
             throw new DisallowedIdModificationException();
         }
 

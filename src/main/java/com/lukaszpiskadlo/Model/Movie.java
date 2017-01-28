@@ -15,7 +15,7 @@ public class Movie {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     @NotEmpty
     private String title;
     @NotEmpty
@@ -53,7 +53,7 @@ public class Movie {
         this.group = builder.group;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -128,17 +128,22 @@ public class Movie {
 
         Movie movie = (Movie) o;
 
-        return id == movie.id;
+        if (id != null ? !id.equals(movie.id) : movie.id != null) return false;
+        if (!title.equals(movie.title)) return false;
+        return director.equals(movie.director);
     }
 
     @Override
     public int hashCode() {
-        return (int) (id ^ (id >>> 32));
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + title.hashCode();
+        result = 31 * result + director.hashCode();
+        return result;
     }
 
     public static class Builder {
 
-        private long id;
+        private Long id;
         private String title;
         private String director;
         private List<Actor> cast;
@@ -151,7 +156,7 @@ public class Movie {
             cast = new ArrayList<>();
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

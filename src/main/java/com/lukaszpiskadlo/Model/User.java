@@ -15,7 +15,7 @@ public class User {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     @NotEmpty
     private String name;
     @NotEmpty
@@ -44,7 +44,7 @@ public class User {
         this.rentedMovies = builder.rentedMovies;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -110,7 +110,7 @@ public class User {
     }
 
     public static class Builder {
-        private long id;
+        private Long id;
         private String name;
         private String lastName;
         private String email;
@@ -121,7 +121,7 @@ public class User {
             rentedMovies = new ArrayList<>();
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }

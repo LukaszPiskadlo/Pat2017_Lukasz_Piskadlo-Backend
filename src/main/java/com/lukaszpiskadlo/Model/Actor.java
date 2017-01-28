@@ -12,7 +12,7 @@ public class Actor {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     @NotEmpty
     private String name;
     @NotEmpty
@@ -31,7 +31,7 @@ public class Actor {
         this.birthDate = builder.birthDate;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -69,7 +69,7 @@ public class Actor {
 
     public static class Builder {
 
-        private long id;
+        private Long id;
         private String name;
         private String lastName;
         private String birthDate;
@@ -77,7 +77,7 @@ public class Actor {
         public Builder() {
         }
 
-        public Builder id(long id) {
+        public Builder id(Long id) {
             this.id = id;
             return this;
         }
