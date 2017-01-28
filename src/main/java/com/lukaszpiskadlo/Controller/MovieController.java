@@ -4,6 +4,9 @@ import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +25,8 @@ public class MovieController {
     }
 
     @GetMapping
-    public List<Movie> findAllMovies() {
-        return movieService.findAll();
+    public PagedResources findAllMovies(Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
+        return assembler.toResource(movieService.findAll(pageable));
     }
 
     @GetMapping("/{movieId}")

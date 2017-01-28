@@ -9,9 +9,12 @@ import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Repository.ActorRepository;
 import com.lukaszpiskadlo.Repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +58,11 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<Movie> findAll() {
         return repository.findAll();
+    }
+
+    @Override
+    public Page<Movie> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override
@@ -158,6 +166,10 @@ public class MovieServiceImpl implements MovieService {
 
     private List<Actor> getActors(List<Actor> cast) {
         List<Actor> actors = new ArrayList<>();
+
+        if (cast == null) {
+            return Collections.emptyList();
+        }
 
         for (Actor actor : cast) {
             Actor existingActor = actorRepository.findByNameAndLastName(actor.getName(), actor.getLastName());
