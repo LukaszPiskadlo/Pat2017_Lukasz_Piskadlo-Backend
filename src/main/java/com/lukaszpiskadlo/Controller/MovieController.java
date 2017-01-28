@@ -53,13 +53,18 @@ public class MovieController {
         return movieService.addActorToMovie(movieId, actor);
     }
 
-    @GetMapping("/group/{groupName}")
-    public List<Movie> findMoviesByGroup(@PathVariable String groupName) {
-        return movieService.findByGroup(groupName);
+    @GetMapping(params = "group")
+    public List<Movie> findMoviesByGroup(@RequestParam String group) {
+        return movieService.findByGroup(group);
     }
 
-    @GetMapping("/available")
-    public List<Movie> findAvailableMovies() {
-        return movieService.findAvailable();
+    @GetMapping(params = "available")
+    public List<Movie> findAvailableMovies(@RequestParam boolean available) {
+
+        if (available) {
+            return movieService.findAvailable();
+        } else {
+            return movieService.findUnavailable();
+        }
     }
 }

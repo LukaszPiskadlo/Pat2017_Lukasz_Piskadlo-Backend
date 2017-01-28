@@ -149,6 +149,13 @@ public class MovieServiceImpl implements MovieService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Movie> findUnavailable() {
+        return repository.findAll().stream()
+                .filter(movie -> movie.getAmountAvailable() == 0)
+                .collect(Collectors.toList());
+    }
+
     private List<Actor> getActors(List<Actor> cast) {
         List<Actor> actors = new ArrayList<>();
 

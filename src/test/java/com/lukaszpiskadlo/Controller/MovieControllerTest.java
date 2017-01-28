@@ -135,7 +135,7 @@ public class MovieControllerTest {
 
         service.create(movie);
 
-        mockMvc.perform(get(PATH + "/group/" + Movie.Group.NEW))
+        mockMvc.perform(get(PATH + "?group=" + Movie.Group.NEW))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType));
     }
@@ -150,7 +150,7 @@ public class MovieControllerTest {
 
         service.create(movie);
 
-        mockMvc.perform(get(PATH + "/available"))
+        mockMvc.perform(get(PATH + "?available=true"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType));
     }

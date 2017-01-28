@@ -15,4 +15,5 @@ public interface MovieService {
     void deleteAllMovies();
     List<Movie> findByGroup(String groupName);
     List<Movie> findAvailable();
+    List<Movie> findUnavailable();
 }

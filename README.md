@@ -292,7 +292,7 @@ mvnw spring-boot:run
 ### Add actor to movie
 
 - Request:
-`POST http://localhost:8080/movies/{id}/actor`
+`POST http://localhost:8080/movies/{id}/actors`
   - Header:
   `Content-Type:application/json`
   - Body:
@@ -328,7 +328,7 @@ mvnw spring-boot:run
 ### Get available movies
 
 - Request:
-`GET http://localhost:8080/movies/available`
+`GET http://localhost:8080/movies?available=true`
 
 - Response:
 ```
@@ -356,7 +356,7 @@ mvnw spring-boot:run
 ### Get movies by group
 
 - Request:
-`GET http://localhost:8080/movies/group/{groupName}`
+`GET http://localhost:8080/movies?group={groupName}`
     - `{groupName} : NEW, HIT, OTHER`
 
 - Response:
@@ -485,7 +485,7 @@ mvnw spring-boot:run
 ### Return movie
 
 - Request:
-    `POST http://localhost:8080/users/{userId/return`
+    `POST http://localhost:8080/users/{userId}/return`
     - Header:
         `Content-Type:application/json`
     - Body: List of movie ids
