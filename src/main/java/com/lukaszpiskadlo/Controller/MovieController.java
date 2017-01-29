@@ -4,20 +4,25 @@ import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
 
+    @Value("${cache.max.age}")
+    private int cacheTime;
     private final MovieService movieService;
 
     @Autowired
@@ -26,8 +31,10 @@ public class MovieController {
     }
 
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public PagedResources findAllMovies(Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
-        return assembler.toResource(movieService.findAll(pageable));
+    public ResponseEntity findAllMovies(Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(cacheTime, TimeUnit.MINUTES))
+                .body(assembler.toResource(movieService.findAll(pageable)));
     }
 
     @GetMapping("/{movieId}")
