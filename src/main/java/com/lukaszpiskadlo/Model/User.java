@@ -2,6 +2,7 @@ package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -15,10 +16,13 @@ public class User {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(readOnly = true)
     private Long id;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String name;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String lastName;
     @Email
     private String email;

@@ -21,6 +21,11 @@ mvnw spring-boot:run
 
 ## API
 
+### Swagger API documentation
+
+* JSON URL: [http://localhost:8080/v2/api-docs](http://localhost:8080/v2/api-docs)
+* UI URL: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
 ### Get all actors
 
 - Request:
@@ -121,6 +126,8 @@ mvnw spring-boot:run
 
 - Request:
 `GET http://localhost:8080/movies`
+    - Header: `Accept:{contentType}`: `application/json` or `application/xml`
+    - Params: `page` - page number, `size` - number of movies on page
 
 - Response:
 ```

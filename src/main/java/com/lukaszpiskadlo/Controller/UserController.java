@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
 
     private final UserService userService;

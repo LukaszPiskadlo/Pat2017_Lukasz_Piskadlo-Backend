@@ -3,10 +3,14 @@ package com.lukaszpiskadlo.Controller;
 import com.lukaszpiskadlo.Model.Actor;
 import com.lukaszpiskadlo.Model.Movie;
 import com.lukaszpiskadlo.Service.MovieService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/movies")
+@RequestMapping(value = "/movies", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MovieController {
 
     @Value("${cache.max.age}")
@@ -30,8 +34,16 @@ public class MovieController {
         this.movieService = movieService;
     }
 
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", paramType = "query", dataType = "int",
+                    value = "Page number, starting from 0"),
+            @ApiImplicitParam(name = "size", paramType = "query", dataType = "int",
+                    value = "Number of movies per page")
+    })
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity findAllMovies(Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
+    public ResponseEntity<PagedResources<Resource<Movie>>> findAllMovies(
+            Pageable pageable, PagedResourcesAssembler<Movie> assembler) {
+
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(cacheTime, TimeUnit.MINUTES))
                 .body(assembler.toResource(movieService.findAll(pageable)));

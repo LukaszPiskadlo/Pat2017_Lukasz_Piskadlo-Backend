@@ -1,6 +1,7 @@
 package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -12,10 +13,13 @@ public class Actor {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(readOnly = true)
     private Long id;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String name;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String lastName;
     private String birthDate;
     @ManyToMany(mappedBy = "cast", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST,  CascadeType.MERGE})

@@ -11,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/actors")
+@RequestMapping(value = "/actors", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ActorController {
 
     private final ActorService actorService;

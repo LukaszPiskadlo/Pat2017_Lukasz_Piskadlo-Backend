@@ -1,6 +1,7 @@
 package com.lukaszpiskadlo.Model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -15,10 +16,13 @@ public class Movie {
 
     @Id
     @GeneratedValue
+    @ApiModelProperty(readOnly = true)
     private Long id;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String title;
     @NotEmpty
+    @ApiModelProperty(required = true)
     private String director;
     @Valid
     @ManyToMany(cascade = {CascadeType.PERSIST,  CascadeType.MERGE}, fetch = FetchType.EAGER)
